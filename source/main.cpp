@@ -13,7 +13,6 @@ int main(){
 
     Object3D car("assets/models/Car.obj", "assets/models/textureMask.png", (Color){0, 176, 255});
     car.scale = (Vector3){2,2,2};
-    RenderManager::RegisterObjectToRender(&car);
     
     while(!WindowShouldClose()){
         car.rotationAngle = GetTime()*10;
@@ -23,7 +22,7 @@ int main(){
 
         if(IsKeyPressed(KEY_R))
             RenderManager::ReloadShaders();
-        
+
         RenderManager::Render();
     }
 

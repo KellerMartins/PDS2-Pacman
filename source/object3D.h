@@ -3,11 +3,13 @@
 
 #include <raylib.h>
 #include <string>
+#include <list>
 #include "utils.h"
 
 class Object3D{
     private:
         bool _hasModel;
+        std::list<Object3D*>::iterator _objectID;
 
     public:
         Vector3 position;
@@ -16,6 +18,7 @@ class Object3D{
         float rotationAngle;
         Model model;
 
+        bool HasModel();
         void Load3DModel(const std::string modelPath, const std::string textureMaskPath, Color color);
         void SetColor(Color color);
         void SetColor(unsigned char red, unsigned char green, unsigned char blue);
