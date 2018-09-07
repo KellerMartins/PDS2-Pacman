@@ -10,6 +10,7 @@ int main(){
     RenderManager::Init(screenWidth, screenHeight, "PDS2 - Pacman");
     RenderManager::SetBloomDownscale(1);
     RenderManager::camera = {{ 8.0f, 8.0f, 8.0f }, { 0.0f, 1.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
+    SetCameraMode(RenderManager::camera, CAMERA_FREE);
 
     Object3D car("assets/models/Car.obj", "assets/models/textureMask.png", (Color){0, 176, 255});
     car.scale = (Vector3){2,2,2};

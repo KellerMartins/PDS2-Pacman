@@ -182,8 +182,9 @@ namespace RenderManager{
     }
 
     void Render(){
+        UpdateCamera(&camera);
         if(!isInitialized) return;
-
+        
         BeginDrawing();
             ClearBackground(BLACK);
 
