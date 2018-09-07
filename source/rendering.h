@@ -5,57 +5,26 @@
 #include <GL/gl.h>
 #include <raylib.h>
 #include <list>
-#include <array>
+#include <string>
 #include "utils.h"
 #include "object3D.h"
 
-class RenderManager{
-    private:
-        int _screenWidth, _screenHeight;
-        std::list<Object3D*> _objectsToRender;
-        Texture2D _blackTexture;
-        int _blurDownscale;
+namespace RenderManager{
 
-        void SetShaderUniforms();
-        void RenderBaseEffect();
-        void RenderBloom();
-        void RenderFinalComposition();
-
-    public:
-
-        const int &screenWidth = _screenWidth;
-        const int &screenHeight = _screenHeight;
-
-        Camera camera;
-
-        Shader blurPass;
-        Shader maskShader;
-        Shader colorShader;
-        Shader outlineFilter;
-        Shader screenShader;
-        Shader copyRTShader;
-
-        int blurPassPixelSizeLoc;
-        int copyRTPixelSizeLoc;
-
-        RenderTexture2D maskRT;
-        RenderTexture2D baseRT;
-        RenderTexture2D tempRT;
-        RenderTexture2D blurRT;
-        RenderTexture2D vBlurRT;
+        extern Camera camera;
 
         std::list<Object3D*>::iterator RegisterObjectToRender(Object3D *obj);
         void RemoveObjectFromRenderer(std::list<Object3D*>::iterator objID);
 
+        void Init(int screenWidth, int screenHeight, std::string windowTitle);
+        void Quit();
+
+        int GetWidth();
+        int GetHeight();
         void SetResolution(int width, int height);
         void SetBloomDownscale(unsigned value);
         void ReloadShaders();
         void Render();
-
-
-        RenderManager();
-        ~RenderManager();
 };
-
 
 #endif
