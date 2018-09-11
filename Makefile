@@ -3,12 +3,18 @@ COMPILER = g++
 OBJS = $(wildcard source/*.cpp)
 APPNAME = Pacman
 
+FLAGS= -std=c++14 -L libs/raylib/lib/ -Wall -Wno-unused-function -I libs/raylib/include
+
 ifeq ($(OS),Windows_NT)
-FLAGS=-L libs/raylib/lib/ -L libs/glew/lib -Wall -lraylibWin64 -lglew32 -lraylib -lopengl32  -lgdi32 -g -Wno-unused-function -I libs/glew/include -I libs/raylib/include
+FLAGS +=-L libs/glew/lib -lraylibWin64 -lglew32 -lopengl32  -lgdi32 -I libs/glew/include 
 else
-FLAGS=-L libs/raylib/lib/ -Wall -lraylib -lm -lpthread -ldl -lrt -lX11 -lGL -lGLEW -g -Wno-unused-function
+FLAGS += -lraylib -lm -lpthread -ldl -lrt -lX11 -lGL -lGLEW
 endif
 
 all:
-	$(COMPILER) -std=c++14 $(OBJS) $(FLAGS) -o $(APPNAME)
+	$(COMPILER) -g -D_DEBUG $(OBJS) $(FLAGS) -o $(APPNAME)
+	@echo "Build Finished!"
+
+release:
+	$(COMPILER) -O3 $(OBJS) $(FLAGS) -o $(APPNAME)
 	@echo "Build Finished!"

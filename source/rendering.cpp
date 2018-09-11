@@ -42,6 +42,23 @@ namespace RenderManager{
     void RenderBaseEffect();
     void RenderBloom();
     void RenderFinalComposition();
+    void RenderDebugPrimitives();
+
+
+    //Debug drawing
+    #ifdef _DEBUG
+    enum DebugPrimitiveType{Line, Cube, Sphere};
+    class DebugDrawPrimitive{
+        public:
+            DebugPrimitiveType type;
+            Vector3 position;
+            Vector3 vectorParameter;
+            float floatParameter;
+            Color color;
+    };
+
+    std::list<DebugDrawPrimitive> _debugPrimitivesToRender;
+    #endif
 
 
     void Init(int screenWidth, int screenHeight, std::string windowTitle){
@@ -192,6 +209,8 @@ namespace RenderManager{
             RenderBloom();
             RenderFinalComposition();
 
+            RenderDebugPrimitives();
+
             DrawFPS(0,0);
 
         EndDrawing();
@@ -286,5 +305,66 @@ namespace RenderManager{
             DrawTexturePro(_baseRT.texture, (Rectangle){ 0, 0, (float)_screenWidth, (float)-_screenHeight }, 
                                             (Rectangle){ 0, 0, (float)_screenWidth, (float)_screenHeight }, (Vector2){ 0, 0 }, 0,  WHITE);
         EndShaderMode();
+    }
+
+
+
+    //Debug drawing functions
+    void DrawDebugLine(Vector3 startPos, Vector3 endPos, Color color){
+        #ifdef _DEBUG
+        DebugDrawPrimitive p;
+        p.type = DebugPrimitiveType::Line;
+        p.position = startPos;
+        p.vectorParameter = endPos;
+        p.color = color;
+
+        _debugPrimitivesToRender.insert(_debugPrimitivesToRender.end(), p);
+        #endif
+    }
+
+    void DrawDebugCube(Vector3 position, Vector3 size, Color color){
+        #ifdef _DEBUG
+        DebugDrawPrimitive p;
+        p.type = DebugPrimitiveType::Cube;
+        p.position = position;
+        p.vectorParameter = size;
+        p.color = color;
+
+        _debugPrimitivesToRender.insert(_debugPrimitivesToRender.end(), p);
+        #endif
+    }
+
+    void DrawDebugSphere(Vector3 centerPos, float radius, Color color){
+        #ifdef _DEBUG
+        DebugDrawPrimitive p;
+        p.type = DebugPrimitiveType::Sphere;
+        p.position = centerPos;
+        p.floatParameter = radius;
+        p.color = color;
+
+        _debugPrimitivesToRender.insert(_debugPrimitivesToRender.end(), p);
+        #endif
+    }
+
+    void RenderDebugPrimitives(){
+        #ifdef _DEBUG
+        BeginMode3D(camera);  
+            for(DebugDrawPrimitive &p : _debugPrimitivesToRender){
+                switch(p.type){
+                    case DebugPrimitiveType::Line:
+                        DrawLine3D(p.position, p.vectorParameter, p.color);
+                    break;
+                    case DebugPrimitiveType::Cube:
+                        DrawCubeWires(p.position, p.vectorParameter.x, p.vectorParameter.y, p.vectorParameter.z, p.color);
+                    break;
+                    case DebugPrimitiveType::Sphere:
+                        DrawSphereWires(p.position, p.floatParameter, 4, 8, p.color);
+                    break;
+                }
+            }  
+        EndMode3D();
+
+        _debugPrimitivesToRender.clear();
+        #endif
     }
 }
