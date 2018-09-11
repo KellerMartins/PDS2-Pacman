@@ -221,7 +221,7 @@ namespace RenderManager{
         BeginTextureMode(_maskRT);    
             BeginMode3D(camera);  
                 for(Object3D* m : _objectsToRender){
-                    if(!m->HasModel()) continue;
+                    if(!m->HasModel() || !m->shouldRender) continue;
 
                     m->model.material.shader = _maskShader;
                     DrawModelEx(m->model, m->position, m->rotationAxis,m->rotationAngle,m->scale, WHITE);
@@ -234,7 +234,7 @@ namespace RenderManager{
         BeginTextureMode(_baseRT);    
             BeginMode3D(camera);  
                 for(Object3D* m : _objectsToRender){
-                    if(!m->HasModel()) continue;
+                    if(!m->HasModel() || !m->shouldRender) continue;
                     
                     m->model.material.shader = _colorShader;
                     DrawModelEx(m->model, m->position, m->rotationAxis,m->rotationAngle,m->scale, m->model.material.maps[MAP_DIFFUSE].color);

@@ -13,6 +13,9 @@ namespace RenderManager{
 
         extern Camera camera;
 
+        //Internal object render register functions
+        //Automatically called by the constructor and destructors of the Object3D class
+        //Do not call manually, use the Object3D interface
         std::list<Object3D*>::iterator RegisterObjectToRender(Object3D *obj);
         void RemoveObjectFromRenderer(std::list<Object3D*>::iterator objID);
 

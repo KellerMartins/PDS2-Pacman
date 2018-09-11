@@ -2,6 +2,7 @@
 #include "rendering.h"
 Object3D::Object3D(){
     _hasModel = false;
+    shouldRender = false;
     position = VECTOR3_ZERO;
     scale = (Vector3){1,1,1};
     rotationAxis = (Vector3){0,1,0};
@@ -29,6 +30,7 @@ void Object3D::Load3DModel(const std::string modelPath, const std::string textur
         UnloadModel(model);    
     }
     _hasModel = true;
+    shouldRender = true;
     
     model = LoadModel(modelPath.c_str());
     model.material.maps[MAP_DIFFUSE].texture = LoadTexture(textureMaskPath.c_str());

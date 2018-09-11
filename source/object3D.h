@@ -12,6 +12,7 @@ class Object3D{
         std::list<Object3D*>::iterator _objectID;
 
     public:
+        bool shouldRender;
         Vector3 position;
         Vector3 scale;
         Vector3 rotationAxis;
