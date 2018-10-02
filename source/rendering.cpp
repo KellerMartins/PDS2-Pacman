@@ -63,6 +63,7 @@ namespace RenderManager{
 
 
     void Init(int screenWidth, int screenHeight, std::string windowTitle){
+        SetConfigFlags(FLAG_MSAA_4X_HINT);
         InitWindow(screenWidth, screenHeight, windowTitle.c_str());
         SetTargetFPS(0);
 

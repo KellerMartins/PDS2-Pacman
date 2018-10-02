@@ -27,14 +27,17 @@ void main(void) {
     newPixel += step(0.001,abs(neighbor - mask));
 
     neighbor = dot(texture2D(texture0, vec2(uv.x - 1/width,uv.y)), allOnes)/3.0;
+    neighborColor = texture2D(texture1,vec2(uv.x - 1/width,uv.y)).rgb;
     maxn = max(maxn,neighborColor);
     newPixel += step(0.001,abs(neighbor - mask));
 
     neighbor = dot(texture2D(texture0, vec2(uv.x,uv.y + 1/height)), allOnes)/3.0;
+    neighborColor = texture2D(texture1,vec2(uv.x,uv.y + 1/height)).rgb;
     maxn = max(maxn,neighborColor);
     newPixel += step(0.001,abs(neighbor - mask));
 
     neighbor = dot(texture2D(texture0, vec2(uv.x,uv.y - 1/height)), allOnes)/3.0;
+    neighborColor = texture2D(texture1,vec2(uv.x,uv.y - 1/height)).rgb;
     maxn = max(maxn,neighborColor);
     newPixel += step(0.001,abs(neighbor - mask));
 

@@ -13,16 +13,16 @@ int main(){
     RenderManager::camera = {{ 8.0f, 8.0f, 8.0f }, { 0.0f, 1.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
     SetCameraMode(RenderManager::camera, CAMERA_FREE);
 
-    Object3D smallGrid("assets/models/Plane.obj", RAYWHITE);
+    Object3D smallGrid("assets/models/Plane.obj", DARKGRAY);
     Mapa m("assets/maps/mapa_exemplo.txt");
     
     while(!WindowShouldClose()){
 
         for(int i=0; i< m.GetNumeroObjetosMapa(); i++){
             Object3D* mapObj = m.GetObjetoMapa(i);
-            mapObj->SetColor((1+sin(mapObj->position.x/16 + GetTime()*1))*127, 
-                             (1+sin(mapObj->position.y/16 + GetTime()*2))*127, 
-                             (1+cos(mapObj->position.x/8 + mapObj->position.y/8 +GetTime()*3))*127);
+            mapObj->SetColor((1+sin(mapObj->position.x/8 + GetTime()*1))*127, 
+                             (1+sin(mapObj->position.z/8 + GetTime()*2))*127, 
+                             (1+cos(mapObj->position.x/8 + mapObj->position.z/8 +GetTime()*3))*127);
         }
 
         if(IsKeyPressed(KEY_R))
