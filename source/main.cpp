@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include "utils.h"
 #include "rendering.h"
+#include "mapa.h"
 
 int main(){
     int screenWidth = 1280;
@@ -12,14 +13,17 @@ int main(){
     RenderManager::camera = {{ 8.0f, 8.0f, 8.0f }, { 0.0f, 1.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
     SetCameraMode(RenderManager::camera, CAMERA_FREE);
 
-    Object3D car("assets/models/Car.obj", "assets/models/textureMask.png", (Color){0, 176, 255});
-    car.scale = (Vector3){2,2,2};
+    Object3D smallGrid("assets/models/Plane.obj", RAYWHITE);
+    Mapa m("assets/maps/mapa_exemplo.txt");
     
     while(!WindowShouldClose()){
-        car.rotationAngle = GetTime()*10;
-        car.SetColor((1+sin(GetTime()*1))*127, 
-                     (1+sin(GetTime()*2))*127, 
-                     (1+cos(GetTime()*3))*127);
+
+        for(int i=0; i< m.GetNumeroObjetosMapa(); i++){
+            Object3D* mapObj = m.GetObjetoMapa(i);
+            mapObj->SetColor((1+sin(mapObj->position.x/16 + GetTime()*1))*127, 
+                             (1+sin(mapObj->position.y/16 + GetTime()*2))*127, 
+                             (1+cos(mapObj->position.x/8 + mapObj->position.y/8 +GetTime()*3))*127);
+        }
 
         if(IsKeyPressed(KEY_R))
             RenderManager::ReloadShaders();

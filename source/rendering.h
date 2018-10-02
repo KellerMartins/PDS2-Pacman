@@ -9,6 +9,9 @@
 #include "utils.h"
 #include "object3D.h"
 
+#define MASK_TEXTURE_PATH "assets/models/textureMask.png"
+#define DEFAULT_MODEL_PATH "assets/models/Cube.obj"
+
 namespace RenderManager{
 
         extern Camera camera;
@@ -28,6 +31,8 @@ namespace RenderManager{
         void SetBloomDownscale(unsigned value);
         void ReloadShaders();
         void Render();
+
+        Texture2D GetMaskTexture();
 
         //Debug drawing functions
         void DrawDebugLine(Vector3 startPos, Vector3 endPos, Color color);

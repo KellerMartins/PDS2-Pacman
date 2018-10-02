@@ -6,7 +6,6 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 uniform vec2 PixelSize;
-uniform int filter;
 
 out vec4 finalColor;
 

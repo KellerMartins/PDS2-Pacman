@@ -20,11 +20,11 @@ class Object3D{
         Model model;
 
         bool HasModel();
-        void Load3DModel(const std::string modelPath, const std::string textureMaskPath, Color color);
+        void Load3DModel(const std::string modelPath, Color color);
         void SetColor(Color color);
         void SetColor(unsigned char red, unsigned char green, unsigned char blue);
         
-        Object3D(const std::string modelPath, const std::string textureMaskPath, Color color);
+        Object3D(const std::string modelPath, Color color);
         Object3D();
         ~Object3D();
 };

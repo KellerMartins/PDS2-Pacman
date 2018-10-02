@@ -31,6 +31,7 @@ namespace RenderManager{
     RenderTexture2D _blurRT;
     RenderTexture2D _vBlurRT;
     Texture2D _blackTexture;
+    Texture2D _maskTexture;
 
     //List of renderable objects
     std::list<Object3D*> _objectsToRender;
@@ -72,6 +73,8 @@ namespace RenderManager{
         Image blackImg = GenImageColor(2,2,BLACK);
         _blackTexture = LoadTextureFromImage(blackImg);
         UnloadImage(blackImg);
+
+        _maskTexture = LoadTexture(MASK_TEXTURE_PATH);
 
         isInitialized = true;
     }
@@ -190,6 +193,10 @@ namespace RenderManager{
         SetShaderValue(_screenShader, GetShaderLocation(_screenShader, "vignettePower"), &val, 1);
     }
 
+    Texture2D GetMaskTexture(){
+        return _maskTexture;
+    }
+
     std::list<Object3D*>::iterator RegisterObjectToRender(Object3D *obj){
         return _objectsToRender.insert(_objectsToRender.begin(), obj);
     }
@@ -226,7 +233,6 @@ namespace RenderManager{
                     m->model.material.shader = _maskShader;
                     DrawModelEx(m->model, m->position, m->rotationAxis,m->rotationAngle,m->scale, WHITE);
                 } 
-                DrawGrid(1000,10);
             EndMode3D();
         EndTextureMode();
 
@@ -240,7 +246,6 @@ namespace RenderManager{
                     DrawModelEx(m->model, m->position, m->rotationAxis,m->rotationAngle,m->scale, m->model.material.maps[MAP_DIFFUSE].color);
                     m->model.material.shader = GetShaderDefault();
                 }  
-                DrawGrid(1000,10);
             EndMode3D();
         EndTextureMode();
 
