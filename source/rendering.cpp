@@ -2,12 +2,12 @@
 
 namespace RenderManager{
 
-    //Internal globals
-    //State
-    bool isInitialized = false;
-
     //Camera
     Camera camera = (Camera){{0,0,0}, {0,0,1}, {0,1,0}, 45.0f, CAMERA_PERSPECTIVE};
+
+    //Internal globals
+    //State
+    bool _isInitialized = false;
 
     //Resolutions
     int _screenWidth = 0;
@@ -77,11 +77,11 @@ namespace RenderManager{
 
         _maskTexture = LoadTexture(MASK_TEXTURE_PATH);
 
-        isInitialized = true;
+        _isInitialized = true;
     }
 
     void Quit(){
-        if(isInitialized){
+        if(_isInitialized){
             UnloadShader(_outlineFilter);
             UnloadShader(_maskShader);
             UnloadShader(_colorShader);
@@ -99,13 +99,13 @@ namespace RenderManager{
 
             CloseWindow();
         }
-        isInitialized = false;
+        _isInitialized = false;
     }
 
     void SetBloomDownscale(unsigned value){
         _blurDownscale = value;
 
-        if(isInitialized){
+        if(_isInitialized){
             UnloadRenderTexture(_blurRT);
             UnloadRenderTexture(_vBlurRT);
         }
@@ -116,7 +116,7 @@ namespace RenderManager{
     void SetResolution(int width, int height){
 
         //Unload rts if they already been created
-        if(isInitialized){
+        if(_isInitialized){
             UnloadRenderTexture(_maskRT);
             UnloadRenderTexture(_baseRT);
             UnloadRenderTexture(_tempRT);
@@ -160,7 +160,7 @@ namespace RenderManager{
     void ReloadShaders(){
 
         //Unload old shaders
-        if(isInitialized){
+        if(_isInitialized){
             UnloadShader(_outlineFilter);
             UnloadShader(_maskShader);
             UnloadShader(_colorShader);
@@ -208,7 +208,7 @@ namespace RenderManager{
 
     void Render(){
         UpdateCamera(&camera);
-        if(!isInitialized) return;
+        if(!_isInitialized) return;
         
         BeginDrawing();
             ClearBackground(BLACK);
