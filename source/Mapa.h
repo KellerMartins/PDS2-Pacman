@@ -20,7 +20,7 @@ private:
 	std::vector<Object3D*> _objetosMapa;
 	
 	void RegistraMapaRenderizavel();
-	void DesregistrarMapaRenderizavel();
+	void DesregistraMapaRenderizavel();
 public:
 
 	Mapa(std::string arq);//Carrega o mapa de um arquivo txt para a matriz

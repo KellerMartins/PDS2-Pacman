@@ -20,13 +20,13 @@ Mapa::Mapa(std::string arq)
 			}
 		}
 	}
-	DesregistrarMapaRenderizavel();
+	DesregistraMapaRenderizavel();
 	RegistraMapaRenderizavel();
 }
 
 Mapa::~Mapa()
 {
-	DesregistrarMapaRenderizavel();
+	DesregistraMapaRenderizavel();
 }
 
 Object3D* Mapa::GetObjetoMapa(int indiceObjeto){
@@ -66,7 +66,7 @@ void Mapa::RegistraMapaRenderizavel(){
 	}
 }
 
-void Mapa::DesregistrarMapaRenderizavel(){
+void Mapa::DesregistraMapaRenderizavel(){
 	for(Object3D* o : _objetosMapa)
 	{
 		delete o;
