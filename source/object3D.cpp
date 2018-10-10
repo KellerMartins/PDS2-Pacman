@@ -1,6 +1,8 @@
 #include "object3D.h"
 #include "rendering.h"
 
+std::map<std::string, Model> Object3D::_modelsCache;
+
 Object3D::Object3D(){
     _hasModel = false;
     shouldRender = false;
@@ -16,7 +18,6 @@ Object3D::Object3D(const std::string modelPath, Color color) : Object3D(){
 
 Object3D::~Object3D(){
     if(_hasModel){
-        UnloadModel(model);
         RenderManager::RemoveObjectFromRenderer(_objectID);
     }
 }
@@ -25,18 +26,27 @@ bool Object3D::HasModel(){
     return _hasModel;
 }
 
-void Object3D::Load3DModel(const std::string modelPath, Color color){
-    if(_hasModel){
-        UnloadModel(model);    
-    }else{
+void Object3D::Load3DModel(const std::string modelPath){
+    if(!_hasModel){
         _objectID = RenderManager::RegisterObjectToRender((Object3D*)this);
     }
     _hasModel = true;
     shouldRender = true;
+
+    //Insert the loaded model inside the cache when loading it for the first time
+    auto modelIt = _modelsCache.find(modelPath);
+    if(modelIt == _modelsCache.end()){
+        _modelsCache[modelPath] = LoadModel(modelPath.c_str());
+        _modelsCache[modelPath].material.maps[MAP_DIFFUSE].texture = RenderManager::GetMaskTexture();
+    }
     
-    model = LoadModel(modelPath.c_str());
-    model.material.maps[MAP_DIFFUSE].texture = RenderManager::GetMaskTexture();
-    model.material.maps[MAP_DIFFUSE].color = color;
+    model = _modelsCache[modelPath];
+    
+}
+
+void Object3D::Load3DModel(const std::string modelPath, Color color){
+    Load3DModel(modelPath);
+    SetColor(color);
 }
 
 void Object3D::SetColor(Color color){

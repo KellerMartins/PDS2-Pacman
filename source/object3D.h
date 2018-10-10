@@ -4,10 +4,12 @@
 #include <raylib.h>
 #include <string>
 #include <list>
+#include <map>
 #include "utils.h"
 
 class Object3D{
     private:
+        static std::map<std::string, Model> _modelsCache;
         bool _hasModel;
         std::list<Object3D*>::iterator _objectID;
 
@@ -20,6 +22,7 @@ class Object3D{
         Model model;
 
         bool HasModel();
+        void Load3DModel(const std::string modelPath);
         void Load3DModel(const std::string modelPath, Color color);
         void SetColor(Color color);
         void SetColor(unsigned char red, unsigned char green, unsigned char blue);
