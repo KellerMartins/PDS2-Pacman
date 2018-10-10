@@ -73,3 +73,12 @@ void Mapa::DesregistraMapaRenderizavel(){
 	}
 	_objetosMapa.clear();
 }
+
+void Mapa::OnUpdate(){
+	for(int i=0; i< GetNumeroObjetosMapa(); i++){
+		Object3D* mapObj = GetObjetoMapa(i);
+		mapObj->SetColor((1+sin(mapObj->position.x/8 + GetTime()*1))*127, 
+				  		 (1+sin(mapObj->position.z/8 + GetTime()*2))*127, 
+						 (1+cos(mapObj->position.x/8 + mapObj->position.z/8 +GetTime()*3))*127);
+	}
+}
