@@ -10,8 +10,10 @@
 class Object3D{
     private:
         static std::map<std::string, Model> _modelsCache;
-        bool _hasModel;
+        
         std::list<Object3D*>::iterator _objectID;
+        bool _hasModel;
+        Color _color;
 
     public:
         bool shouldRender;

@@ -5,6 +5,7 @@ std::map<std::string, Model> Object3D::_modelsCache;
 
 Object3D::Object3D(){
     _hasModel = false;
+    _color = RAYWHITE;
     shouldRender = false;
     position = VECTOR3_ZERO;
     scale = (Vector3){1,1,1};
@@ -40,6 +41,7 @@ void Object3D::Load3DModel(const std::string modelPath){
         _modelsCache[modelPath].material.maps[MAP_DIFFUSE].texture = RenderManager::GetMaskTexture();
     }
     
+    _modelsCache[modelPath].material.maps[MAP_DIFFUSE].color = _color;
     model = _modelsCache[modelPath];
     
 }
@@ -50,9 +52,10 @@ void Object3D::Load3DModel(const std::string modelPath, Color color){
 }
 
 void Object3D::SetColor(Color color){
+    _color = color;
     model.material.maps[MAP_DIFFUSE].color = color;
 }
 
 void Object3D::SetColor(unsigned char red, unsigned char green, unsigned char blue){
-    model.material.maps[MAP_DIFFUSE].color = (Color){red, green, blue, (unsigned char)255};
+    SetColor((Color){red, green, blue, (unsigned char)255});
 }
