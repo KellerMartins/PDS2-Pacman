@@ -217,6 +217,8 @@ namespace RenderManager{
             RenderBloom();
             RenderFinalComposition();
 
+            UI::DrawUI();
+
             RenderDebugPrimitives();
 
             DrawFPS(0,0);

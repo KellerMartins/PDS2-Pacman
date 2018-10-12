@@ -8,6 +8,7 @@
 #include <string>
 #include "utils.h"
 #include "object3D.h"
+#include "UI/ui.h"
 
 #define MASK_TEXTURE_PATH "assets/models/textureMask.png"
 #define DEFAULT_MODEL_PATH "assets/models/Cube.obj"

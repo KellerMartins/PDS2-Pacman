@@ -1,6 +1,6 @@
 
 COMPILER = g++
-OBJS = $(wildcard source/*.cpp)
+OBJS = $(wildcard source/*.cpp) $(wildcard source/*/*.cpp)
 APPNAME = Pacman
 
 FLAGS= -std=c++14 -L libs/raylib/lib/ -Wall -Wno-unused-function -I libs/raylib/include

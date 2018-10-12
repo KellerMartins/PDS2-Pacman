@@ -16,7 +16,7 @@ class GameEvents{
         static std::vector<GameEvents*> _events;
     public:
         GameEvents();
-        ~GameEvents();
+        virtual ~GameEvents();
         GENERATE_EVENT_HEADERS(Update)
         GENERATE_EVENT_HEADERS(Test)
 };

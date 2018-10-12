@@ -4,6 +4,7 @@
 #include "rendering.h"
 #include "gameEvents.h"
 #include "mapa.h"
+#include "UI/imageUI.h"
 
 int main(){
     int screenWidth = 1280;
@@ -27,6 +28,8 @@ int main(){
                           "assets/models/pacman/walk/player_walk_5.obj"};
 
     float animTime = 0;
+
+    ImageUI title("assets/interface/title.png",0.88,0.88,0.25,0.25);
 
     while(!WindowShouldClose()){
         
