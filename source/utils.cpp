@@ -1,19 +1,7 @@
 #include "utils.h"
 
-double Clamp(double x, double upper, double lower){
+double Clamp(double x, double lower, double upper){
     return x>upper? upper : (x<lower? lower : x);
-}
-
-char ClampColor(double x){
-    return x>255? (char)255 : (x<0? 0 : x);
-}
-
-double Logistic(double x, double x0, double max, double steepness){
-    return max/(1+exp(-steepness*(x-x0)));
-}
-
-double Gaussian(double x, double x0, double max, double steepness){
-    return max*exp(-( (x-x0)*(x-x0) )/(2*steepness*steepness));
 }
 
 float Lerp(float v0, float v1, float t) {
@@ -40,7 +28,7 @@ float Smoothstep(float edge0, float edge1, float x)
     return x*x*(3 - 2 * x);
 }
 
-//Modulus function, returning only positive values
+//Modulus functions, returning only positive values
 int Modulus(int a, int b)
 {
     int r = a % b;
