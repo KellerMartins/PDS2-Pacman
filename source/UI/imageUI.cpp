@@ -5,7 +5,8 @@ ImageUI::ImageUI(std::string imagePath, float X, float Y, float Width, float Hei
     SetScale(Width, Height);
 
     _imageTex = LoadTexture(imagePath.c_str());
-    SetTextureFilter(_imageTex, FILTER_BILINEAR);
+    SetTextureFilter(_imageTex, FILTER_TRILINEAR);
+    GenTextureMipmaps(&_imageTex);
 }
 
 ImageUI::~ImageUI(){
