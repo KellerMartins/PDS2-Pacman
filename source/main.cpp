@@ -4,7 +4,7 @@
 #include "rendering.h"
 #include "gameEvents.h"
 #include "mapa.h"
-#include "UI/imageUI.h"
+#include "ui.h"
 
 int main(){
     int screenWidth = 1280;
@@ -14,6 +14,8 @@ int main(){
     RenderManager::SetBloomDownscale(1);
     RenderManager::camera = {{ 8.0f, 8.0f, 8.0f }, { 0.0f, 1.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
     SetCameraMode(RenderManager::camera, CAMERA_FREE);
+
+    UI::SetFont("assets/interface/intro/IntroMetal.fnt");
 
     Object3D smallGrid("assets/models/Plane.obj", DARKGRAY);
     Mapa m("assets/maps/mapa_exemplo.txt");
@@ -29,8 +31,6 @@ int main(){
 
     float animTime = 0;
 
-    ImageUI title("assets/interface/title.png",0.88,0.88,0.25,0.25);
-
     while(!WindowShouldClose()){
         
         pacman.Load3DModel(walk[(int)animTime]);
@@ -41,6 +41,9 @@ int main(){
 
         if(IsKeyPressed(KEY_R))
             RenderManager::ReloadShaders();
+
+        UI::DrawImage("assets/interface/title.png",0.88,0.88,0.25,0.25);
+        UI::DrawTextCentered("Score:8000", 0.5, 0.05, 5, 0.5, RAYWHITE);
 
         RenderManager::Render();
     }
