@@ -7,9 +7,10 @@ class Pacman : public Personagem {
 public:
 	int pontuacao = 0;
 	Pacman();
+	void calcula_direcao();
 	void mover();
 	void colisao();
-	void morrer();//caso for ter animacao
+	void morrer();
 };
 
 
