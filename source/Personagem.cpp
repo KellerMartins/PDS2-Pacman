@@ -7,15 +7,3 @@ Personagem::Personagem()
 	this->orientacao = "Direita";
 }
 
-void Personagem::mover()
-{
-
-}
-void colisao()
-{
-
-}
-void morrer()
-{
-	
-}

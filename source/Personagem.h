@@ -4,15 +4,15 @@
 
 class Personagem {
 public:
-
-	float x;//posicao
-	float y;
+	int direcao_x, direcao_y;
+	int x;//posicao
+	int y;
 	std::string orientacao; //direita, esquerda, cima, baixo
 
 	Personagem();
-	void mover();
-	void colisao();
-	void morrer();//caso for ter animacao
+	virtual void mover() = 0;
+	virtual void colisao() = 0;
+	virtual void morrer() = 0;//caso for ter animacao
 };
 
 
