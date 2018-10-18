@@ -18,8 +18,9 @@ int main(){
     UI::SetFont("assets/interface/intro/IntroMetal.fnt");
 
     Object3D smallGrid("assets/models/Plane.obj", DARKGRAY);
-    Mapa m("assets/maps/mapa_exemplo.txt");
-    
+    Mapa::CarregaArquivo("assets/maps/mapa_exemplo.txt");
+    Mapa::RemoveElementoMapa(0, 3);
+
     Object3D pacman("assets/models/pacman/walk/player_walk_0.obj", BLUE);
     pacman.position = (Vector3){3,0,10};
     std::string walk[] = {"assets/models/pacman/walk/player_walk_0.obj",

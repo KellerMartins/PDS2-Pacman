@@ -13,24 +13,26 @@
 #define LINHAS 13
 #define COLUNAS 15
 
-enum ElementoMapa{Vazio, Parede};
+enum ElementoMapa{Vazio, Parede, Ponto, Especial};
 
 class Mapa : public GameEvents{
 	private:
+		static Mapa _mapaGlobal;
+
 		ElementoMapa _mapa[COLUNAS][LINHAS];
 		std::vector<Object3D*> _objetosMapa;
 		
 		void RegistraMapaRenderizavel();
 		void DesregistraMapaRenderizavel();
+
+		Mapa() {};
 	public:
-
-		Mapa(std::string arq);//Carrega o mapa de um arquivo txt para a matriz
-		~Mapa();
 		
-		Object3D* GetObjetoMapa(int indiceObjeto);
-		int GetNumeroObjetosMapa();
+		~Mapa();
 
-		ElementoMapa GetElementoMapa(unsigned int x, unsigned int y);
+		static void CarregaArquivo(std::string arq);
+		static ElementoMapa GetElementoMapa(unsigned int x, unsigned int y);
+		static void RemoveElementoMapa(unsigned int x, unsigned int y);
 
 		virtual void OnUpdate() override;
 };
