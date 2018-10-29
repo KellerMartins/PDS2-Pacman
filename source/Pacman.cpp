@@ -9,6 +9,7 @@ using namespace std;
 #define POSICAO_INIMIGO 2
 #define ITEM_PONTO 3
 #define ITEM_FRUTA 4
+#define VALOR_FRUTA 50
 
 Pacman::Pacman(int x, int y){
 	this->x = x;
@@ -29,7 +30,7 @@ int Pacman::verifica_posicao(vector<enemy> enemies){
 		int enemy_y = enemies[i]._Y();
 
 		if(enemy_x == this->x || enemy_y== this->y ){
-			if(enemies[i].isscared()){
+			if(enemies[i].isScared()){
 				enemies[i].morrer();
 				this->pontuacao += 50;
 			}else{
@@ -41,10 +42,18 @@ int Pacman::verifica_posicao(vector<enemy> enemies){
 	
 	if(m.GetElementoMapa(this->x,this->y) == ITEM_PONTO) {
 		this->pontuacao++
+		//Altera o valor no mapa para que o ponto desapareça
+		//m.setElementoZero(this->x,this->y)
 		return 0;
 	};
 	
 	if(m.GetElementoMapa(this->x,this->y) == ITEM_FRUTA){
+		for (int i = 0; i < enemies.size(); ++i){
+			enemies[i].getScared();
+		}
+		this->pontuacao+= VALOR_FRUTA;
+		//Altera o valor no mapa para que o ponto desapareça
+		//m.setElementoZero(this->x,this->y)
 		return 0;
 	};
 	
