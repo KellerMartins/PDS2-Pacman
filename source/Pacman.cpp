@@ -1,24 +1,63 @@
 #include "Pacman.h"
+#include <vector>
 #include <string>
+
+using namespace std;
 
 #define MAPA_VALIDO 0
 #define MAPA_INVALIDO 1
 #define POSICAO_INIMIGO 2
-#define ITEM_BOLA 3
+#define ITEM_PONTO 3
 #define ITEM_FRUTA 4
+#define VALOR_FRUTA 50
 
-Pacman::Pacman(){
-	this->x = 0;
-	this->y = 0;
-	this->orientacao = "teste";
+Pacman::Pacman(int x, int y){
+	this->x = x;
+	this->y = y;
+	this->direcao_y = 0;
+	this->direcao_x = 0;
+	this->vidas = 3;
 }
 
-int Pacman::verifica_posicao(){
-	if(m.GetElementoMapa(this->x,this->y) == MAPA_INVALIDO) return MAPA_INVALIDO;
-	if(/*colidiu com inimido*/) return POSICAO_INIMIGO;
-	if(m.GetElementoMapa(this->x,this->y) == ITEM_BOLA) return ITEM_BOLA;
-	if(m.GetElementoMapa(this->x,this->y) == ITEM_FRUTA) return ITEM_FRUTA;
-	if(m.GetElementoMapa(this->x,this->y) == MAPA_VALIDO)	return MAPA_VALIDO;
+int Pacman::verifica_posicao(vector<enemy> enemies){
+	if(m.GetElementoMapa(this->x,this->y) == MAPA_INVALIDO) {
+		return MAPA_INVALIDO;
+	}
+
+	for (int i = 0; i < enemies.size(); ++i)
+	{
+		int enemy_x = enemies[i]._X();
+		int enemy_y = enemies[i]._Y();
+
+		if(enemy_x == this->x || enemy_y== this->y ){
+			if(enemies[i].isScared()){
+				enemies[i].morrer();
+				this->pontuacao += 50;
+			}else{
+				this->morrer();
+				return 0;				
+			}
+		};
+	}
+	
+	if(m.GetElementoMapa(this->x,this->y) == ITEM_PONTO) {
+		this->pontuacao++
+		//Altera o valor no mapa para que o ponto desapareça
+		//m.setElementoZero(this->x,this->y)
+		return 0;
+	};
+	
+	if(m.GetElementoMapa(this->x,this->y) == ITEM_FRUTA){
+		for (int i = 0; i < enemies.size(); ++i){
+			enemies[i].getScared();
+		}
+		this->pontuacao+= VALOR_FRUTA;
+		//Altera o valor no mapa para que o ponto desapareça
+		//m.setElementoZero(this->x,this->y)
+		return 0;
+	};
+	
+	return 0;
 }
 
 void Pacman::calcula_direcao(){
@@ -47,37 +86,29 @@ void Pacman::calcula_direcao(){
 	}
 }
 
-void Pacman::mover(){
+void Pacman::mover(vector<enemy> enemies){
 	this->calcula_direcao();
 	
 	//Altera a direção efetivamente
 	this->x += this->direcao_x;
 	this->y += this->direcao_y;
-	int event = this->verifica_posicao();
-	
-	switch event:
-	
-	case MAPA_INVALIDO: //Retorna pra posição anterior, pois não pode alcançar a posição desejada
+
+	if(this->verifica_posicao(enemies)){
 	this->x -= this->direcao_x;
 	this->y -= this->direcao_y;
-	break;
+	}	
+}
 
-	case POSICAO_INIMIGO:
-	this->morrer();
-	break;
+void Pacman::morrer(){
+	this->x = 0;
+	this->y = 0;
+	this->vidas--;
 
-	case ITEM_FRUTA:
-	this->morrer();
-	break;
+	if(!this->vidas){
+		//game over
+	}
+}
 
-	case ITEM_BOLINHA:
-	this->morrer();
-	break;
-	
-	case 3:
-	this->pontuacao++;
-	break;
-	
-	default:
-	break;
+void Pacman::OnUpdate(){
+	this->mover();
 }
