@@ -1,4 +1,6 @@
 #include "GameEvents.h"
+#include "Enemy.h"
+#include "Mapa.h"
 #ifndef PACMAN_H
 #define PACMAN_H
 #include <string>
@@ -13,10 +15,11 @@ private:
 public:
 	Pacman(int x, int y);
 	void calcula_direcao();
-	void mover(vector<enemy> enemies);
-	int verifica_posicao(vector<enemy> enemies);
+	void mover(std::vector<Enemy> enemies, Mapa m);
+	int verifica_posicao(std::vector<Enemy> enemies, Mapa m);
 	void morrer();
-	void OnUpdate();
+	//void OnUpdate();
+	//void OnUpdate(std::vector<Enemy> enemies, Mapa m);
 };
 
 

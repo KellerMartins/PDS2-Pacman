@@ -1,4 +1,6 @@
 #include "Pacman.h"
+#include "Mapa.h"
+#include "Enemy.h"
 #include <vector>
 #include <string>
 
@@ -19,18 +21,21 @@ Pacman::Pacman(int x, int y){
 	this->vidas = 3;
 }
 
-int Pacman::verifica_posicao(vector<enemy> enemies){
+int Pacman::verifica_posicao(std::vector<Enemy> enemies, Mapa m){ //m nao estava sendo declarado
 	if(m.GetElementoMapa(this->x,this->y) == MAPA_INVALIDO) {
 		return MAPA_INVALIDO;
 	}
 
-	for (int i = 0; i < enemies.size(); ++i)
-	{
-		int enemy_x = enemies[i]._X();
-		int enemy_y = enemies[i]._Y();
+	for (unsigned int i = 0; i < enemies.size(); ++i)
+	{	//Nao sei se entendi certo essa parte 
+		//int Enemy_x = enemies[i]._X();
+		//int Enemy_y = enemies[i]._Y();
+		
+		int Enemy_x = enemies[i].get_x();
+		int Enemy_y = enemies[i].get_y();
 
-		if(enemy_x == this->x || enemy_y== this->y ){
-			if(enemies[i].isScared()){
+		if(Enemy_x == this->x || Enemy_y== this->y ){
+			if(enemies[i].get_isScared()){
 				enemies[i].morrer();
 				this->pontuacao += 50;
 			}else{
@@ -41,14 +46,14 @@ int Pacman::verifica_posicao(vector<enemy> enemies){
 	}
 	
 	if(m.GetElementoMapa(this->x,this->y) == ITEM_PONTO) {
-		this->pontuacao++
+		this->pontuacao++;
 		//Altera o valor no mapa para que o ponto desapareça
 		//m.setElementoZero(this->x,this->y)
 		return 0;
 	};
 	
 	if(m.GetElementoMapa(this->x,this->y) == ITEM_FRUTA){
-		for (int i = 0; i < enemies.size(); ++i){
+		for (unsigned int i = 0; i < enemies.size(); ++i){
 			enemies[i].getScared();
 		}
 		this->pontuacao+= VALOR_FRUTA;
@@ -61,22 +66,22 @@ int Pacman::verifica_posicao(vector<enemy> enemies){
 }
 
 void Pacman::calcula_direcao(){
-	if (IsKeyPressed('KEY_LEFT'))
+	if (IsKeyPressed(KEY_LEFT))
 	{
 		this->direcao_y = 0;
 		this->direcao_x = 1;
 	}
-	else if (IsKeyPressed('KEY_RIGHT'))
+	else if (IsKeyPressed(KEY_RIGHT))
 	{
 		this->direcao_y = 0;
 		this->direcao_x = -1;
 	}
-	else if (IsKeyPressed('KEY_UP'))
+	else if (IsKeyPressed(KEY_UP))
 	{
 		this->direcao_y = -1;
 		this->direcao_x = 0;
 	}
-	else if(IsKeyPressed('KEY_DOWN')){
+	else if(IsKeyPressed(KEY_DOWN)){
 		this->direcao_y = 1;
 		this->direcao_x = 0;
 	}
@@ -86,14 +91,14 @@ void Pacman::calcula_direcao(){
 	}
 }
 
-void Pacman::mover(vector<enemy> enemies){
+void Pacman::mover(std::vector<Enemy> enemies, Mapa m){
 	this->calcula_direcao();
 	
 	//Altera a direção efetivamente
 	this->x += this->direcao_x;
 	this->y += this->direcao_y;
 
-	if(this->verifica_posicao(enemies)){
+	if(this->verifica_posicao(enemies, m)){
 	this->x -= this->direcao_x;
 	this->y -= this->direcao_y;
 	}	
@@ -109,6 +114,11 @@ void Pacman::morrer(){
 	}
 }
 
-void Pacman::OnUpdate(){
+/*void Pacman::OnUpdate(){
 	this->mover();
-}
+}*/
+
+/* Nao deveria ser assim??
+void Pacman::OnUpdate(std::vector<Enemy> enemies, Mapa m){
+	this->mover(std::vector<Enemy> enemies, Mapa m);
+}*/
