@@ -1,8 +1,10 @@
+
+#ifndef PACMAN_H
+#define PACMAN_H
 #include "GameEvents.h"
 #include "Enemy.h"
 #include "Mapa.h"
-#ifndef PACMAN_H
-#define PACMAN_H
+#include <vector>
 #include <string>
 
 class Pacman : public GameEvents {
@@ -15,11 +17,10 @@ private:
 public:
 	Pacman(int x, int y);
 	void calcula_direcao();
-	void mover(std::vector<Enemy> enemies, Mapa m);
-	int verifica_posicao(std::vector<Enemy> enemies, Mapa m);
+	void mover(std::vector<Enemy*> enemies);
+	int verifica_posicao(std::vector<Enemy*> enemies);
 	void morrer();
-	//void OnUpdate();
-	//void OnUpdate(std::vector<Enemy> enemies, Mapa m);
+	virtual void OnUpdate();
 };
 
 

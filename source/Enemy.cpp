@@ -1,6 +1,4 @@
 #include "Enemy.h"
-#include <vector>
-#include <string>
 
 using namespace std;
 
@@ -19,22 +17,22 @@ Enemy::Enemy(int x, int y){
 	this->isScared = 0;
 }
 
-int Enemy::verifica_posicao(vector<Enemy> enemies, Mapa m){
-	if(m.GetElementoMapa(this->x,this->y) == MAPA_INVALIDO) {
+int Enemy::verifica_posicao(vector<Enemy*> enemies){
+	if(Mapa::GetElementoMapa(this->x,this->y) == MAPA_INVALIDO) {
 		return MAPA_INVALIDO;
 	}
 
 	return 0;
 }
 
-void Enemy::mover(std::vector<Enemy> enemies, Mapa m){
-	//this->calcula_direcao(); o metodo eh virtual faz sentido chamar ele aqui?
+void Enemy::mover(vector<Enemy*> enemies){
+	this->calcula_direcao();
 	
 	//Altera a direção efetivamente
 	this->x += this->direcao_x;
 	this->y += this->direcao_y;
 
-	if(this->verifica_posicao(enemies, m)){
+	if(this->verifica_posicao(enemies)){
 	this->x -= this->direcao_x;
 	this->y -= this->direcao_y;
 	}	
@@ -46,9 +44,9 @@ void Enemy::morrer(){
 	this->isScared = 0;
 }
 
-/*void Enemy::OnUpdate(){
-	this->mover();
-}*/
+void Enemy::OnUpdate(){
+	
+}
 
 void Enemy::getScared(){
 	this->isScared = 1;
