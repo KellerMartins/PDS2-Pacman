@@ -1,5 +1,10 @@
 #include "rendering.h"
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include "ui.h"
+#include "utils.h"
+
 namespace RenderManager{
 
     //Camera
@@ -47,7 +52,7 @@ namespace RenderManager{
 
 
     //Debug drawing
-    #ifdef _DEBUG
+    #ifndef NDEBUG
     enum DebugPrimitiveType{Line, Cube, Sphere};
     class DebugDrawPrimitive{
         public:
@@ -63,10 +68,14 @@ namespace RenderManager{
 
 
     void Init(int screenWidth, int screenHeight, std::string windowTitle){
+        #ifdef NDEBUG
+        SetTraceLog(0);
+        #endif
+
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         InitWindow(screenWidth, screenHeight, windowTitle.c_str());
         SetTargetFPS(0);
-
+        
         LoadShaders();
         SetResolution(screenWidth, screenHeight);
         glewInit();
@@ -319,7 +328,7 @@ namespace RenderManager{
 
     //Debug drawing functions
     void DrawDebugLine(Vector3 startPos, Vector3 endPos, Color color){
-        #ifdef _DEBUG
+        #ifndef NDEBUG
         DebugDrawPrimitive p;
         p.type = DebugPrimitiveType::Line;
         p.position = startPos;
@@ -331,7 +340,7 @@ namespace RenderManager{
     }
 
     void DrawDebugCube(Vector3 position, Vector3 size, Color color){
-        #ifdef _DEBUG
+        #ifndef NDEBUG
         DebugDrawPrimitive p;
         p.type = DebugPrimitiveType::Cube;
         p.position = position;
@@ -343,7 +352,7 @@ namespace RenderManager{
     }
 
     void DrawDebugSphere(Vector3 centerPos, float radius, Color color){
-        #ifdef _DEBUG
+        #ifndef NDEBUG
         DebugDrawPrimitive p;
         p.type = DebugPrimitiveType::Sphere;
         p.position = centerPos;
@@ -355,7 +364,7 @@ namespace RenderManager{
     }
 
     void RenderDebugPrimitives(){
-        #ifdef _DEBUG
+        #ifndef NDEBUG
         BeginMode3D(camera);  
             for(DebugDrawPrimitive &p : _debugPrimitivesToRender){
                 switch(p.type){

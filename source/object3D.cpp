@@ -1,5 +1,6 @@
 #include "object3D.h"
 #include "rendering.h"
+#include "utils.h"
 
 std::map<std::string, Model> Object3D::_modelsCache;
 

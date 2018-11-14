@@ -5,7 +5,6 @@
 #include <string>
 #include <list>
 #include <map>
-#include "utils.h"
 
 class Object3D{
     private:

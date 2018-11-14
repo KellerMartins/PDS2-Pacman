@@ -1,14 +1,11 @@
 #ifndef RENDERING_H
 #define RENDERING_H
 
-#include <GL/glew.h>
-#include <GL/gl.h>
 #include <raylib.h>
 #include <list>
 #include <string>
-#include "utils.h"
 #include "object3D.h"
-#include "ui.h"
+
 
 #define MASK_TEXTURE_PATH "assets/models/textureMask.png"
 #define DEFAULT_MODEL_PATH "assets/models/Cube.obj"
