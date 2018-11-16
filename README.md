@@ -3,8 +3,7 @@
 ### Dependências de Compilação:
  - Linux: 
      - g++ ou clang++
-     - libglew-dev
+     - libx11-dev
      - libgl1-mesa-dev
  - Windows
      - MinGW64 g++
-     - GLEW (versão pré compilada na pasta libs/glew/lib)

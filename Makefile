@@ -3,12 +3,12 @@ COMPILER = g++
 OBJS = $(wildcard source/*.cpp) $(wildcard source/*/*.cpp)
 APPNAME = Pacman
 
-FLAGS= -std=c++14 -L third_party/raylib/lib/ -Wall -Wno-unused-function -I third_party/raylib/include
+FLAGS= -std=c++14 -L third_party/raylib/lib/ -Wall -Wno-unused-function -I third_party/raylib/include -I third_party/glad/include
 
 ifeq ($(OS),Windows_NT)
-FLAGS +=-L third_party/glew/lib -lraylibWin64 -lglew32 -lopengl32  -lgdi32 -I third_party/glew/include 
+FLAGS += -lraylibWin64 -lopengl32 -lgdi32 -static
 else
-FLAGS += -lraylib -lm -lpthread -ldl -lrt -lX11 -lGL -lGLEW
+FLAGS += -lraylib -lm -lpthread -ldl -lrt -lX11
 endif
 
 all:
