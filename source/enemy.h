@@ -6,15 +6,19 @@
 #include "mapa.h"
 
 class Enemy : public GameEvents {
-private:
+protected:
 	int isScared;
 	int direcao_y;
 	int direcao_x;
 	int x, y;
+	static std::vector<Enemy*> enemies;
+
 public:
 	Enemy(int x, int y);
-
-	virtual void calcula_direcao() = 0;
+	//virtual void calcula_direcao() = 0;
+	static void adiciona_inimigo(Enemy* enemy);
+	static void remove_inimigos();
+	static std::vector<Enemy*> &get_enemies();
 	void mover(std::vector<Enemy*> enemies);
 	int verifica_posicao(std::vector<Enemy*> enemies);
 	void morrer();

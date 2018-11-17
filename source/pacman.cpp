@@ -1,6 +1,4 @@
 #include "pacman.h"
-
-
 using namespace std;
 
 #define MAPA_VALIDO 0
@@ -16,14 +14,16 @@ Pacman::Pacman(int x, int y){
 	this->direcao_y = 0;
 	this->direcao_x = 0;
 	this->vidas = 3;
+	this->velocidade = 5.0;
+	this->timerMovimento = 0.0;
 }
 
-int Pacman::verifica_posicao(vector<Enemy*> enemies){
+int Pacman::verifica_posicao(){
 	if(Mapa::GetElementoMapa(this->x,this->y) == MAPA_INVALIDO) {
 		return MAPA_INVALIDO;
 	}
 
-	for (unsigned int i = 0; i < enemies.size(); ++i)
+	/*for (unsigned int i = 0; i < enemies.size(); ++i)
 	{	//Nao sei se entendi certo essa parte 
 		//int Enemy_x = enemies[i]._X();
 		//int Enemy_y = enemies[i]._Y();
@@ -40,7 +40,7 @@ int Pacman::verifica_posicao(vector<Enemy*> enemies){
 				return 0;				
 			}
 		};
-	}
+	}*/
 	
 	if(Mapa::GetElementoMapa(this->x,this->y) == ITEM_PONTO) {
 		this->pontuacao++;
@@ -50,9 +50,9 @@ int Pacman::verifica_posicao(vector<Enemy*> enemies){
 	};
 	
 	if(Mapa::GetElementoMapa(this->x,this->y) == ITEM_FRUTA){
-		for (unsigned int i = 0; i < enemies.size(); ++i){
+		/*for (unsigned int i = 0; i < enemies.size(); ++i){
 			enemies[i]->getScared();
-		}
+		}*/
 		this->pontuacao+= VALOR_FRUTA;
 		//Altera o valor no mapa para que o ponto desapareça
 		Mapa::RemoveElementoMapa(this->x,this->y);
@@ -66,12 +66,12 @@ void Pacman::calcula_direcao(){
 	if (IsKeyPressed(KEY_LEFT))
 	{
 		this->direcao_y = 0;
-		this->direcao_x = 1;
+		this->direcao_x = -1;
 	}
 	else if (IsKeyPressed(KEY_RIGHT))
 	{
 		this->direcao_y = 0;
-		this->direcao_x = -1;
+		this->direcao_x = 1;
 	}
 	else if (IsKeyPressed(KEY_UP))
 	{
@@ -82,23 +82,24 @@ void Pacman::calcula_direcao(){
 		this->direcao_y = 1;
 		this->direcao_x = 0;
 	}
-	else{
+	/*else{
 		this->direcao_y = 0;
 		this->direcao_x = 0;
-	}
+	}*/
 }
 
-void Pacman::mover(std::vector<Enemy*> enemies){
-	this->calcula_direcao();
+void Pacman::mover(){
 	
 	//Altera a direção efetivamente
 	this->x += this->direcao_x;
 	this->y += this->direcao_y;
+	std::cout<<this->direcao_x <<' '<<this->direcao_y <<std::endl;
 
-	if(this->verifica_posicao(enemies)){
+	if(this->verifica_posicao()){
 	this->x -= this->direcao_x;
 	this->y -= this->direcao_y;
 	}	
+	
 }
 
 void Pacman::morrer(){
@@ -112,5 +113,14 @@ void Pacman::morrer(){
 }
 
 void Pacman::OnUpdate(){
+	this->calcula_direcao();
 	
+	this->timerMovimento += GetFrameTime()*this->velocidade;
+	if(timerMovimento >= 1){
+		timerMovimento = 0;
+		mover();
+	}
+	RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, WHITE);
+
+
 }

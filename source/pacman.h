@@ -4,8 +4,10 @@
 #include "gameEvents.h"
 #include "enemy.h"
 #include "mapa.h"
+#include <time.h>
 #include <vector>
 #include <string>
+#include <cmath>
 
 class Pacman : public GameEvents {
 private:
@@ -14,11 +16,13 @@ private:
 	int direcao_y;
 	int direcao_x;
 	int x, y;
+	float velocidade;
+	float timerMovimento;
 public:
 	Pacman(int x, int y);
 	void calcula_direcao();
-	void mover(std::vector<Enemy*> enemies);
-	int verifica_posicao(std::vector<Enemy*> enemies);
+	void mover();
+	int verifica_posicao();
 	void morrer();
 	virtual void OnUpdate();
 };

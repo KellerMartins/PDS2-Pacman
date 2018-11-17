@@ -5,7 +5,12 @@
 #include "gameEvents.h"
 #include "mapa.h"
 #include "ui.h"
-
+#include "pacman.h"
+#include "enemy.h"
+#include "blinky.h"
+#include "inky.h"
+#include "pinky.h"
+#include "clyde.h"
 int main(){
     int screenWidth = 1280;
     int screenHeight = 720;
@@ -31,6 +36,19 @@ int main(){
                           "assets/models/pacman/walk/player_walk_5.obj"};
 
     float animTime = 0;
+
+    Pacman pc (3,10);
+
+    Blinky* blinky = new Blinky(1,11);
+    Inky* inky = new Inky(11,11);
+    Pinky* pinky = new Pinky(1,1);
+    Clyde* clyde = new Clyde(11,1);
+
+    Enemy::adiciona_inimigo(blinky);
+    Enemy::adiciona_inimigo(inky);
+    Enemy::adiciona_inimigo(pinky);
+    Enemy::adiciona_inimigo(clyde);
+    
 
     while(!WindowShouldClose()){
         
