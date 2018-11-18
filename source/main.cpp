@@ -1,10 +1,11 @@
 #include <iostream>
 #include <raylib.h>
 #include "utils.h"
-#include "rendering.h"
+#include "graphics/rendering.h"
+#include "graphics/ui.h"
 #include "gameEvents.h"
 #include "mapa.h"
-#include "ui.h"
+
 #include "pacman.h"
 #include "enemy.h"
 #include "blinky.h"
@@ -23,9 +24,9 @@ int main(){
     UI::SetFont("assets/interface/intro/IntroMetal.fnt");
 
     Object3D smallGrid("assets/models/map/ground.obj", DARKGRAY);
-    Mapa::CarregaArquivo("assets/maps/mapa1.txt");
+    Mapa::GetMapaGlobal().CarregaArquivo("assets/maps/mapa1.txt");
 
-    Pacman pc (5,10);
+    Pacman pc (Mapa::GetPlayerSpawn().x,Mapa::GetPlayerSpawn().y);
 
     Blinky* blinky = new Blinky(1,11);
     Inky* inky = new Inky(11,11);

@@ -22,8 +22,6 @@ void Mapa::CarregaArquivo(std::string arq)
 {
 	std::ifstream arquivo(arq);
 
-	Mapa& mapa = GetMapaGlobal();
-
 	for(int y = 0; y < ALTURA; y++)
 	{
 		for(int x = LARGURA-1; x >= 0; x--)
@@ -32,7 +30,13 @@ void Mapa::CarregaArquivo(std::string arq)
 			arquivo >> elemento;
 			if(!arquivo.fail())
 			{
-				mapa._mapa[x][y] = (ElementoMapa) elemento;
+				if(elemento <= MAX_INDICE_ELEMENTO_MAPA){
+					_mapa[x][y] = (ElementoMapa) elemento;
+				}else{
+					if(elemento == INDICE_PACMAN){
+						_playerSpawn = (Vector2){(float)x, (float)y};
+					}
+				}
 			}
 			else
 			{
@@ -40,8 +44,8 @@ void Mapa::CarregaArquivo(std::string arq)
 			}
 		}
 	}
-	mapa.DesregistraMapaRenderizavel();
-	mapa.RegistraMapaRenderizavel();
+	DesregistraMapaRenderizavel();
+	RegistraMapaRenderizavel();
 }
 
 ElementoMapa Mapa::GetElementoMapa(unsigned int x, unsigned int y)
@@ -94,6 +98,10 @@ void Mapa::DesregistraMapaRenderizavel()
 		delete o;
 	}
 	_objetosMapa.clear();
+}
+
+Vector2 Mapa::GetPlayerSpawn(){
+	return GetMapaGlobal()._playerSpawn;
 }
 
 void Mapa::OnUpdate()

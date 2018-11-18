@@ -2,47 +2,46 @@
 
 #include "utils.h"
 
-std::string walk[] = {"assets/models/pacman/walk/player_walk_0.obj",
-				  	  "assets/models/pacman/walk/player_walk_1.obj",
-					  "assets/models/pacman/walk/player_walk_2.obj",
-					  "assets/models/pacman/walk/player_walk_3.obj",
-					  "assets/models/pacman/walk/player_walk_4.obj",
-					  "assets/models/pacman/walk/player_walk_5.obj"};
-
-std::string idle[] = {"assets/models/pacman/idle/player_idle_0.obj"};
-
 using namespace std;
 #define VALOR_FRUTA 50
 
-Pacman::Pacman(int x, int y){
-	this->model.Load3DModel("assets/models/pacman/walk/player_walk_0.obj", BLUE);
-	this->model.position = (Vector3){(float)x, 0, (float)y};
+Pacman::Pacman(int x, int y) : modelo("assets/models/pacman/idle/player_idle_0.obj", BLUE),
+							   andando("assets/models/pacman/walk/player_walk", 6, true),
+							   parado("assets/models/pacman/idle/player_idle", 1, true),
+							   morrendo("assets/models/pacman/die/player_die", 18, false)
+{
+	this->andando.Preload();
+	this->parado.Preload();
+	this->morrendo.Preload();
+	this->modelo.position = (Vector3){(float)x, 0, (float)y};
 	this->x = x;
 	this->y = y;
-	this->direcao_y = 1;
+	this->direcao_y = 0;
 	this->direcao_x = 0;
+	this->vivo = true;
 	this->vidas = 3;
 	this->velocidade = 2.5;
 	this->timerAnimacao = 0.0;
 }
 
 bool Pacman::verifica_posicao(){
-	int ix = roundf(this->x + this->direcao_x*0.5);
-	int iy = roundf(this->y + this->direcao_y*0.5);
-
-	if(Mapa::GetElementoMapa(ix,iy) == ElementoMapa::Parede) {
+	int ix = roundf(this->x);
+	int iy = roundf(this->y);
+	int nextx = roundf(this->x + this->direcao_x*0.5);
+	int nexty = roundf(this->y + this->direcao_y*0.5);
+	
+	if(Mapa::GetElementoMapa(nextx,nexty) == ElementoMapa::Parede) {
 		return true;
 	}
-	
-	/*for (unsigned int i = 0; i < enemies.size(); ++i)
-	{	//Nao sei se entendi certo essa parte 
-		//int Enemy_x = enemies[i]._X();
-		//int Enemy_y = enemies[i]._Y();
-		
-		int Enemy_x = enemies[i]->get_x();
-		int Enemy_y = enemies[i]->get_y();
 
-		if(Enemy_x == this->x || Enemy_y== this->y ){
+	std::vector<Enemy*> &enemies = Enemy::get_enemies();
+	
+	for(unsigned int i = 0; i < enemies.size(); ++i)
+	{
+		int enemy_x = enemies[i]->get_x();
+		int enemy_y = enemies[i]->get_y();
+
+		if(enemy_x == ix && enemy_y == iy){
 			if(enemies[i]->get_isScared()){
 				enemies[i]->morrer();
 				this->pontuacao += 50;
@@ -50,8 +49,8 @@ bool Pacman::verifica_posicao(){
 				this->morrer();
 				return 0;				
 			}
-		};
-	}*/
+		}
+	}
 	
 	if(Mapa::GetElementoMapa(ix,iy) == ElementoMapa::Ponto) {
 		this->pontuacao++;
@@ -60,9 +59,9 @@ bool Pacman::verifica_posicao(){
 	}
 	
 	if(Mapa::GetElementoMapa(ix,iy) == ElementoMapa::Especial){
-		/*for (unsigned int i = 0; i < enemies.size(); ++i){
+		for (unsigned int i = 0; i < enemies.size(); ++i){
 			enemies[i]->getScared();
-		}*/
+		}
 		this->pontuacao+= VALOR_FRUTA;
 		//Altera o valor no mapa para que o ponto desapareça
 		Mapa::RemoveElementoMapa(ix,iy);
@@ -72,35 +71,35 @@ bool Pacman::verifica_posicao(){
 }
 
 void Pacman::calcula_direcao(){
-	RenderManager::DrawDebugCube((Vector3){ceilf(x-1), 0.5, roundf(y)}, (Vector3){1,1,1}, WHITE);
-	RenderManager::DrawDebugCube((Vector3){floorf(x+1), 0.5, roundf(y)}, (Vector3){1,1,1}, WHITE);
-	RenderManager::DrawDebugCube((Vector3){roundf(x), 0.5, ceilf(y-1)}, (Vector3){1,1,1}, WHITE);
-	RenderManager::DrawDebugCube((Vector3){roundf(x), 0.5, floorf(y+1)}, (Vector3){1,1,1}, WHITE);
+	//RenderManager::DrawDebugCube((Vector3){ceilf(x-1), 0.5, roundf(y)}, (Vector3){1,1,1}, WHITE);
+	//RenderManager::DrawDebugCube((Vector3){floorf(x+1), 0.5, roundf(y)}, (Vector3){1,1,1}, WHITE);
+	//RenderManager::DrawDebugCube((Vector3){roundf(x), 0.5, ceilf(y-1)}, (Vector3){1,1,1}, WHITE);
+	//RenderManager::DrawDebugCube((Vector3){roundf(x), 0.5, floorf(y+1)}, (Vector3){1,1,1}, WHITE);
 
 	if (IsKeyPressed(KEY_LEFT) && Mapa::GetElementoMapa(ceilf(x-1),roundf(y)) != ElementoMapa::Parede)
 	{
-		this->model.rotationAngle = -90;
+		this->modelo.rotationAngle = -90;
 		this->y = roundf(y);
 		this->direcao_y = 0;
 		this->direcao_x = -1;
 	}
 	else if (IsKeyPressed(KEY_RIGHT) && Mapa::GetElementoMapa(floorf(x+1),roundf(y)) != ElementoMapa::Parede)
 	{
-		this->model.rotationAngle = 90;
+		this->modelo.rotationAngle = 90;
 		this->y = roundf(y);
 		this->direcao_y = 0;
 		this->direcao_x = 1;
 	}
 	else if (IsKeyPressed(KEY_UP) && Mapa::GetElementoMapa(roundf(x),ceilf(y-1)) != ElementoMapa::Parede)
 	{
-		this->model.rotationAngle = 180;
+		this->modelo.rotationAngle = 180;
 		this->x = roundf(x);
 		this->direcao_y = -1;
 		this->direcao_x = 0;
 	}
 	else if(IsKeyPressed(KEY_DOWN) && Mapa::GetElementoMapa(roundf(x),floorf(y+1)) != ElementoMapa::Parede)
 	{
-		this->model.rotationAngle = 0;
+		this->modelo.rotationAngle = 0;
 		this->x = roundf(x);
 		this->direcao_y = 1;
 		this->direcao_x = 0;
@@ -108,9 +107,10 @@ void Pacman::calcula_direcao(){
 }
 
 void Pacman::morrer(){
-	this->x = 0;
-	this->y = 0;
+	this->vivo = false;
 	this->vidas--;
+	
+	this->timerAnimacao = 0;
 
 	if(!this->vidas){
 		//game over
@@ -118,28 +118,40 @@ void Pacman::morrer(){
 }
 
 void Pacman::OnUpdate(){
-	this->calcula_direcao();
-
+	
 	this->timerAnimacao += GetFrameTime() * 9/*Frames por segundo*/;
 	
-	
-	bool colidiu = this->verifica_posicao();
-	if(!colidiu){
-		this->x = fModulus(this->x + this->direcao_x*this->velocidade*GetFrameTime(), LARGURA);
-		this->y = fModulus(this->y + this->direcao_y*this->velocidade*GetFrameTime(), ALTURA);
+	if(this->vivo){
+		this->calcula_direcao();
+		bool colidiu = this->verifica_posicao();
+		if(!colidiu && (this->direcao_x != 0 || this->direcao_y != 0)){
+			this->x = fModulus(this->x + this->direcao_x*this->velocidade*GetFrameTime(), LARGURA);
+			this->y = fModulus(this->y + this->direcao_y*this->velocidade*GetFrameTime(), ALTURA);
 
-		timerAnimacao = (int)timerAnimacao > 5/*Num frames - 1*/ ? 0 : timerAnimacao;
-		this->model.Load3DModel(walk[(int)timerAnimacao]);
+			andando.SetTimer(timerAnimacao);
+			this->modelo.Load3DModel(andando.GetCurrentFrame());
+		}else{
+			parado.SetTimer(timerAnimacao);
+			this->modelo.Load3DModel(parado.GetCurrentFrame());
+		}
 	}else{
-		timerAnimacao = (int)timerAnimacao > 0/*Num frames - 1*/ ? 0 : timerAnimacao;
-		this->model.Load3DModel(idle[(int)timerAnimacao]);
+		morrendo.SetTimer(timerAnimacao);
+		this->modelo.Load3DModel(morrendo.GetCurrentFrame());
+
+		if(morrendo.Finished()){
+			TriggerRestart();
+		}
 	}
+	this->modelo.position = (Vector3){(float)x, 0, (float)y};
 
-	this->model.position = (Vector3){(float)x, 0, (float)y};
+	//RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, WHITE);
+}
 
-	
-	
-	
-
-	RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, WHITE);
+void Pacman::OnRestart(){
+	Vector2 spawn = Mapa::GetPlayerSpawn();
+	this->x = spawn.x;
+	this->y = spawn.y;
+	this->direcao_y = 0;
+	this->direcao_x = 0;
+	this->vivo = true;
 }

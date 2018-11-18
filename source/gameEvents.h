@@ -18,7 +18,7 @@ class GameEvents{
         GameEvents();
         virtual ~GameEvents();
         GENERATE_EVENT_HEADERS(Update)
-        GENERATE_EVENT_HEADERS(Test)
+        GENERATE_EVENT_HEADERS(Restart)
 };
 
 #endif

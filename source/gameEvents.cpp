@@ -12,7 +12,7 @@ void GameEvents::Trigger ## eventName () {   \
 
 //Macro calls for every game event
 GENERATE_EVENT_FUNCTIONS(Update)
-GENERATE_EVENT_FUNCTIONS(Test)
+GENERATE_EVENT_FUNCTIONS(Restart)
 
 GameEvents::GameEvents(){
     _events.push_back(this);
