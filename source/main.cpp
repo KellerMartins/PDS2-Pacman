@@ -22,22 +22,10 @@ int main(){
 
     UI::SetFont("assets/interface/intro/IntroMetal.fnt");
 
-    Object3D smallGrid("assets/models/Plane.obj", DARKGRAY);
-    Mapa::CarregaArquivo("assets/maps/mapa_exemplo.txt");
-    Mapa::RemoveElementoMapa(0, 3);
+    Object3D smallGrid("assets/models/map/ground.obj", DARKGRAY);
+    Mapa::CarregaArquivo("assets/maps/mapa1.txt");
 
-    Object3D pacman("assets/models/pacman/walk/player_walk_0.obj", BLUE);
-    pacman.position = (Vector3){3,0,10};
-    std::string walk[] = {"assets/models/pacman/walk/player_walk_0.obj",
-                          "assets/models/pacman/walk/player_walk_1.obj",
-                          "assets/models/pacman/walk/player_walk_2.obj",
-                          "assets/models/pacman/walk/player_walk_3.obj",
-                          "assets/models/pacman/walk/player_walk_4.obj",
-                          "assets/models/pacman/walk/player_walk_5.obj"};
-
-    float animTime = 0;
-
-    Pacman pc (3,10);
+    Pacman pc (5,10);
 
     Blinky* blinky = new Blinky(1,11);
     Inky* inky = new Inky(11,11);
@@ -51,10 +39,6 @@ int main(){
     
 
     while(!WindowShouldClose()){
-        
-        pacman.Load3DModel(walk[(int)animTime]);
-        animTime += GetFrameTime() * 9/*Frames por segundo*/;
-        animTime = (int)animTime > 5/*Num frames*/ ? 0 : animTime;
 
         GameEvents::TriggerUpdate();
 

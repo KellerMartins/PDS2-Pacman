@@ -11,18 +11,18 @@
 
 class Pacman : public GameEvents {
 private:
+	Object3D model;
 	int pontuacao = 0;
 	int vidas;
 	int direcao_y;
 	int direcao_x;
-	int x, y;
+	float x, y;
 	float velocidade;
-	float timerMovimento;
+	float timerAnimacao;
 public:
 	Pacman(int x, int y);
 	void calcula_direcao();
-	void mover();
-	int verifica_posicao();
+	bool verifica_posicao();
 	void morrer();
 	virtual void OnUpdate();
 };

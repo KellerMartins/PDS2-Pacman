@@ -1,7 +1,6 @@
 #include "rendering.h"
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include "glad/glad.h"
 #include "ui.h"
 #include "utils.h"
 
@@ -78,7 +77,6 @@ namespace RenderManager{
         
         LoadShaders();
         SetResolution(screenWidth, screenHeight);
-        glewInit();
 
         Image blackImg = GenImageColor(2,2,BLACK);
         _blackTexture = LoadTextureFromImage(blackImg);

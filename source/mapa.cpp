@@ -3,9 +3,9 @@
 #include "utils.h"
 
 std::string modeloElemento[] = {"",
-								DEFAULT_MODEL_PATH,
-								"",
-								"",
+								"assets/models/map/wall.obj",
+								"assets/models/map/point.obj",
+								"assets/models/map/special.obj",
 							   };
 
 Mapa& Mapa::GetMapaGlobal(){
@@ -24,9 +24,9 @@ void Mapa::CarregaArquivo(std::string arq)
 
 	Mapa& mapa = GetMapaGlobal();
 
-	for(int y = 0; y < LINHAS; y++)
+	for(int y = 0; y < ALTURA; y++)
 	{
-		for(int x = COLUNAS-1; x >= 0; x--)
+		for(int x = LARGURA-1; x >= 0; x--)
 		{
 			int elemento;
 			arquivo >> elemento;
@@ -46,14 +46,14 @@ void Mapa::CarregaArquivo(std::string arq)
 
 ElementoMapa Mapa::GetElementoMapa(unsigned int x, unsigned int y)
 {
-	if(x >= COLUNAS || y >=LINHAS) return ElementoMapa::Vazio;
+	if(x >= LARGURA || y >=ALTURA) return ElementoMapa::Vazio;
 
 	return GetMapaGlobal()._mapa[x][y];
 }
 
 void Mapa::RemoveElementoMapa(unsigned int x, unsigned int y)
 {
-	if(x >= COLUNAS || y >=LINHAS) return ;
+	if(x >= LARGURA || y >=ALTURA) return ;
 
 	Mapa& mapa = GetMapaGlobal();
 	mapa._mapa[x][y] = ElementoMapa::Vazio;
@@ -71,9 +71,9 @@ void Mapa::RemoveElementoMapa(unsigned int x, unsigned int y)
 
 void Mapa::RegistraMapaRenderizavel()
 {
-	for(int y = 0; y < LINHAS; y++)
+	for(int y = 0; y < ALTURA; y++)
 	{
-		for(int x = 0; x < COLUNAS; x++)
+		for(int x = 0; x < LARGURA; x++)
 		{
 			int indiceElem = (int)(this->_mapa[x][y]);
 			if(indiceElem < (int)(sizeof(modeloElemento)/sizeof(modeloElemento[0])) && modeloElemento[indiceElem] != "")

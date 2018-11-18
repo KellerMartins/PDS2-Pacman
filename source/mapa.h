@@ -10,14 +10,14 @@
 #include "rendering.h"
 #include "gameEvents.h"
 
-#define LINHAS 13
-#define COLUNAS 15
+#define ALTURA 27
+#define LARGURA 21
 
 enum ElementoMapa{Vazio, Parede, Ponto, Especial};
 
 class Mapa : public GameEvents{
 	private:
-		ElementoMapa _mapa[COLUNAS][LINHAS];
+		ElementoMapa _mapa[LARGURA][ALTURA];
 		std::vector<Object3D*> _objetosMapa;
 		
 		void RegistraMapaRenderizavel();
