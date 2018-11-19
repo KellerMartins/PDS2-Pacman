@@ -30,6 +30,9 @@ namespace RenderManager{
         void ReloadShaders();
         void Render();
 
+        void SetCameraOffset(Vector3 offset);
+        void CameraFollow(Vector3 position);
+
         Texture2D GetMaskTexture();
 
         //Debug drawing functions

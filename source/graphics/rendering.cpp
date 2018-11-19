@@ -10,6 +10,8 @@ namespace RenderManager{
     Camera camera = (Camera){{0,0,0}, {0,0,1}, {0,1,0}, 45.0f, CAMERA_PERSPECTIVE};
 
     //Internal globals
+    Vector3 _cameraOffset = {0,0,0};
+
     //State
     bool _isInitialized = false;
 
@@ -190,7 +192,6 @@ namespace RenderManager{
         _copyRTPixelSizeLoc = GetShaderLocation(_copyRTShader, "PixelSize");
 
         int texIndex = 1;
-        SetShaderValuei(_outlineFilter, GetShaderLocation(_outlineFilter, "texture1"), &texIndex, 1);
         SetShaderValuei(_blurPass, GetShaderLocation(_blurPass, "texture1"), &texIndex, 1);
         SetShaderValuei(_screenShader, GetShaderLocation(_screenShader, "texture1"), &texIndex, 1);
 
@@ -217,6 +218,18 @@ namespace RenderManager{
         _objectsToRender.erase(objID);
     }
 
+    void SetCameraOffset(Vector3 offset){
+        _cameraOffset = offset;
+    }
+
+    void CameraFollow(Vector3 position){
+        camera.position = (Vector3){position.x + _cameraOffset.x, 
+                                    position.y + _cameraOffset.y,
+                                    position.z + _cameraOffset.z};
+
+        camera.target = position;
+    }
+
     void Render(){
         UpdateCamera(&camera);
         if(!_isInitialized) return;
@@ -224,10 +237,12 @@ namespace RenderManager{
         BeginDrawing();
             ClearBackground(BLACK);
 
+            glDisable(GL_BLEND);
             RenderBaseEffect();
             RenderBloom();
             RenderFinalComposition();
 
+            glEnable(GL_BLEND);
             UI::Render();
 
             RenderDebugPrimitives();
@@ -245,34 +260,17 @@ namespace RenderManager{
                     if(!m->HasModel() || !m->shouldRender) continue;
 
                     m->model.material.shader = _maskShader;
-                    DrawModelEx(m->model, m->position, m->rotationAxis,m->rotationAngle,m->scale, WHITE);
-                } 
-            EndMode3D();
-        EndTextureMode();
-
-        //Render base color to _baseRT
-        BeginTextureMode(_baseRT);    
-            BeginMode3D(camera);  
-                for(Object3D* m : _objectsToRender){
-                    if(!m->HasModel() || !m->shouldRender) continue;
-                    
-                    m->model.material.shader = _colorShader;
                     DrawModelEx(m->model, m->position, m->rotationAxis,m->rotationAngle,m->scale, m->model.material.maps[MAP_DIFFUSE].color);
                     m->model.material.shader = GetShaderDefault();
-                }  
+                } 
             EndMode3D();
         EndTextureMode();
 
         //Render mask and base with outline shader to _tempRT        
         BeginTextureMode(_tempRT);
             BeginShaderMode(_outlineFilter);
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, _baseRT.texture.id);
-
                 DrawTexturePro(_maskRT.texture, (Rectangle){ 0, 0, (float)_screenWidth, (float)-_screenHeight }, 
                                                 (Rectangle){ 0, 0, (float)_screenWidth, (float)_screenHeight }, (Vector2){ 0, 0 }, 0,  WHITE);
-
-                glActiveTexture(0);
             EndShaderMode();
         EndTextureMode();
 

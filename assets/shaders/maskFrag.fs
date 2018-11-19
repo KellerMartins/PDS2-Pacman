@@ -12,5 +12,5 @@ uniform vec3 color;
 void main()
 {     
     vec4 tex = texture(texture0, fragTexCoord); 
-    finalColor = vec4(tex.rgb,1.0);
+    finalColor = vec4(colDiffuse.rgb, (tex.r + tex.g + tex.b)/3.0);
 }

@@ -18,12 +18,13 @@ int main(){
 
     RenderManager::Init(screenWidth, screenHeight, "PDS2 - Pacman");
     RenderManager::SetBloomDownscale(1);
-    RenderManager::camera = {{ 8.0f, 8.0f, 8.0f }, { 0.0f, 1.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
-    SetCameraMode(RenderManager::camera, CAMERA_FREE);
+    RenderManager::SetCameraOffset((Vector3){0.0f, 13.5237f, 7.3416f});
+    RenderManager::camera = {{ LARGURA/2, 32.0f, ALTURA/1.9 }, { LARGURA/2, 0.0f, ALTURA/2 }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
+    //SetCameraMode(RenderManager::camera, CAMERA_FREE);
 
     UI::SetFont("assets/interface/intro/IntroMetal.fnt");
 
-    Object3D smallGrid("assets/models/map/ground.obj", DARKGRAY);
+    //Object3D smallGrid("assets/models/map/ground.obj", DARKGRAY);
     Mapa::GetMapaGlobal().CarregaArquivo("assets/maps/mapa1.txt");
 
     Pacman pc (Mapa::GetPlayerSpawn().x,Mapa::GetPlayerSpawn().y);
@@ -40,7 +41,6 @@ int main(){
     
 
     while(!WindowShouldClose()){
-
         GameEvents::TriggerUpdate();
 
         if(IsKeyPressed(KEY_R))
