@@ -223,11 +223,11 @@ namespace RenderManager{
     }
 
     void CameraFollow(Vector3 position){
-        camera.position = (Vector3){position.x + _cameraOffset.x, 
+        Vector3 newPos =  (Vector3){position.x + _cameraOffset.x, 
                                     position.y + _cameraOffset.y,
                                     position.z + _cameraOffset.z};
-
-        camera.target = position;
+        camera.position = Lerp(camera.position, newPos, GetFrameTime() * CAMERA_SPEED);
+        camera.target = Lerp(camera.target, position, GetFrameTime() * CAMERA_SPEED);
     }
 
     void Render(){

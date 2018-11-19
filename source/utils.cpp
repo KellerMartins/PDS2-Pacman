@@ -8,11 +8,10 @@ float Lerp(float v0, float v1, float t) {
     return (1 - t) * v0 + t * v1;
 }
 
-Color Lerp(Color v0, Color v1, float t) {
-    return (Color){(unsigned char)((1 - t) * v0.r + t * v1.r),
-                   (unsigned char)((1 - t) * v0.g + t * v1.g),
-                   (unsigned char)((1 - t) * v0.b + t * v1.b),
-                   (unsigned char)((1 - t) * v0.a + t * v1.a)};
+Vector3 Lerp(Vector3 v0, Vector3 v1, float t) {
+    return (Vector3){((1 - t) * v0.x + t * v1.x),
+                     ((1 - t) * v0.y + t * v1.y),
+                     ((1 - t) * v0.z + t * v1.z)};
 }
 
 int Step(float edge, float x ) 
