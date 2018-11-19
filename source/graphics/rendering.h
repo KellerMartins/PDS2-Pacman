@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include "object3D.h"
+#include "debugPrimitives.h"
 
 
 #define MASK_TEXTURE_PATH "assets/models/textureMask.png"
@@ -36,11 +37,6 @@ namespace RenderManager{
         void CameraFollow(Vector3 position);
 
         Texture2D GetMaskTexture();
-
-        //Debug drawing functions
-        void DrawDebugLine(Vector3 startPos, Vector3 endPos, Color color);
-        void DrawDebugCube(Vector3 position, Vector3 size, Color color);
-        void DrawDebugSphere(Vector3 centerPos, float radius, Color color);                                             
 };
 
 #endif
