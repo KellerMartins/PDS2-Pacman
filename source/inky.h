@@ -5,6 +5,6 @@
 class Inky : public Enemy{
 public:
     Inky(int x, int y);
-	//virtual void calcula_direcao() = 0;
+	
 };
 #endif
