@@ -5,6 +5,5 @@
 class Blinky : public Enemy{
 public:
     Blinky(int x, int y);
-	//virtual void calcula_direcao() = 0;
 };
 #endif
