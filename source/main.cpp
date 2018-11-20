@@ -14,18 +14,24 @@
 #include "pinky.h"
 #include "clyde.h"
 
+int screenWidth = 1920;
+int screenHeight = 1080;
+bool fullscreen = false;
 
 enum State{Menu, Game};
 State currentState = Menu;
 
 void MenuState();
 void GameState();
+bool OpenConfigWindow();
 
 int main(){
-    int screenWidth = 1280;
-    int screenHeight = 720;
+    
+    if(!OpenConfigWindow())
+        return 0;
+    
 
-    RenderManager::Init(screenWidth, screenHeight, "PDS2 - Pacman");
+    RenderManager::Init(screenWidth, screenHeight, fullscreen, "PDS2 - Pacman");
     RenderManager::SetBloomDownscale(1);
     RenderManager::SetCameraOffset((Vector3){0.0f, 18.5237f, 7.3416f});
     RenderManager::camera = {{ LARGURA/2, 32.0f, ALTURA/1.9 }, { LARGURA/2, 0.0f, ALTURA/2 }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
@@ -92,4 +98,91 @@ void GameState(){
     std::ostringstream scoreString;
     scoreString << "Score:" << counter++;
     UI::DrawTextCentered(scoreString.str(), 0.5, 0.05, 5, 0.5, RAYWHITE);
+}
+
+bool OpenConfigWindow(){ 
+    InitWindow(400, 125, "Pacman - PDS2");
+    
+    int currResolution = 1;
+    while(1){
+        if(WindowShouldClose()){
+            //Fecha a janela
+            CloseWindow();
+            return false;
+        }
+
+        //Define os retângulos dos botões da janela
+        Rectangle previous = { 10, 50, 20, 30 };
+        Rectangle next = { 210, 50, 20, 30 };
+        Rectangle play = { 255, 45, 125, 70 };
+        Rectangle fullscr = { 10, 87, 30, 27 };
+        
+        //Checa se clicou em um deles ou apertou a tecla correspondente ao comando
+        if((CheckCollisionPointRec(GetMousePosition(), previous) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) ||  IsKeyPressed(KEY_LEFT))
+            currResolution -= currResolution-1>=0? 1:0;
+        
+        if((CheckCollisionPointRec(GetMousePosition(), next) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) ||  IsKeyPressed(KEY_RIGHT))
+            currResolution += currResolution+1<=3? 1:0;
+        
+        if(CheckCollisionPointRec(GetMousePosition(), fullscr) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            fullscreen = !fullscreen;
+        
+        if((CheckCollisionPointRec(GetMousePosition(), play) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) ||  IsKeyReleased(KEY_ENTER))
+            break; //Termina o loop da tela de configuraçoes
+        
+        //Define a resolução a ser usada
+        switch(currResolution){
+            case 0:
+                screenWidth = 1920;
+                screenHeight = 1080;
+            break;
+            case 1:
+                screenWidth = 1366;
+                screenHeight = 768;
+            break;
+            case 2:
+                screenWidth = 1280;
+                screenHeight = 720;
+            break;
+            case 3:
+            default:
+                screenWidth = 800;
+                screenHeight = 450;
+            break;
+        }
+        
+        //> Renderização
+        BeginDrawing();
+           //Define a cor de fundo
+           ClearBackground(RAYWHITE);
+           //Renderiza o texto
+           DrawTextEx(GetFontDefault(),"Escolha a resolução da tela: ", (Vector2){7,5}, 30, 1, BLACK); 
+           DrawTextEx(GetFontDefault(),FormatText("%4d x %4d",screenWidth,screenHeight),(Vector2){35, 41}, 33,2, BLACK); 
+           DrawTextEx(GetFontDefault(),"Tela cheia",(Vector2){46, 85}, 33, 1, BLACK); 
+           
+           //Renderiza o botão de tela cheia (se ativo ou não)
+            DrawCircle(fullscr.x+fullscr.width/2, fullscr.y+fullscr.height/2, fullscr.height/2, fullscreen? (Color)GREEN : (Color)RED);
+           
+           //Renderiza o botão de jogar
+           DrawRectangleRec(play, GREEN);
+           DrawText("Jogar!",273, 65, 30, WHITE); 
+            
+           //Renderiza as setas de resolução
+           if(currResolution>0)
+                DrawTextEx(GetFontDefault(),"<",(Vector2){15, 41}, 33, 2, BLACK); 
+           else
+               DrawTextEx(GetFontDefault(),"<",(Vector2){15, 41}, 33, 2, LIGHTGRAY); 
+           
+           if(currResolution<2){
+               DrawTextEx(GetFontDefault(),">",(Vector2){215, 41}, 33, 2, BLACK);
+           }else{
+              DrawTextEx(GetFontDefault(),">",(Vector2){215, 41}, 37, 2, LIGHTGRAY);
+           }
+           
+        EndDrawing();
+    }
+    //Fecha a janela de configurações
+    CloseWindow();
+
+    return true;
 }

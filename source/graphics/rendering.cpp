@@ -52,13 +52,17 @@ namespace RenderManager{
     void RenderDebugPrimitives();
 
 
-    void Init(int screenWidth, int screenHeight, std::string windowTitle){
+    void Init(int screenWidth, int screenHeight, bool fullscreen, std::string windowTitle){
         #ifdef NDEBUG
         SetTraceLog(0);
         ShowLogo();
         #endif
+        
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         InitWindow(screenWidth, screenHeight, windowTitle.c_str());
+        if(fullscreen)
+            ToggleFullscreen();
+
         #ifdef NDEBUG
         SetTargetFPS(60);
         #else

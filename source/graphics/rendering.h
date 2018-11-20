@@ -23,7 +23,7 @@ namespace RenderManager{
         std::list<Object3D*>::iterator RegisterObjectToRender(Object3D *obj);
         void RemoveObjectFromRenderer(std::list<Object3D*>::iterator objID);
 
-        void Init(int screenWidth, int screenHeight, std::string windowTitle);
+        void Init(int screenWidth, int screenHeight, bool fullscreen, std::string windowTitle);
         void Quit();
 
         int GetWidth();
