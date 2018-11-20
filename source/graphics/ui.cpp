@@ -53,6 +53,9 @@ namespace UI{
 
 
     void SetFont(std::string fontPath){
+        if(_loadedFont)
+            UnloadFont(_font);
+        
         _loadedFont = true;
         _font = LoadFont(fontPath.c_str());
         SetTextureFilter(_font.texture, FILTER_TRILINEAR);
