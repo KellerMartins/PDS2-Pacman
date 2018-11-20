@@ -14,6 +14,8 @@ double Clamp(double x, double lower, double upper);
 float Lerp(float v0, float v1, float t);
 Vector3 Lerp(Vector3 v0, Vector3 v1, float t);
 
+float Distance(Vector3 a, Vector3 b);
+
 int Step(float edge, float x );
 float Smoothstep(float edge0, float edge1, float x);
 

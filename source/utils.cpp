@@ -14,6 +14,12 @@ Vector3 Lerp(Vector3 v0, Vector3 v1, float t) {
                      ((1 - t) * v0.z + t * v1.z)};
 }
 
+float Distance(Vector3 a, Vector3 b){
+    return sqrt( (b.x-a.x)*(b.x-a.x) + 
+                 (b.y-a.y)*(b.y-a.y) + 
+                 (b.z-a.z)*(b.z-a.z));
+}
+
 int Step(float edge, float x ) 
 {
    return x<edge? 0:1;
