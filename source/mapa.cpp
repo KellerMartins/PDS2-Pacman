@@ -37,6 +37,9 @@ void Mapa::CarregaArquivo(std::string arq)
 					if(elemento == INDICE_PACMAN){
 						_playerSpawn = (Vector2){(float)x, (float)y};
 					}
+					else if(elemento >= INDICE_FANTASMAS){
+						_enemySpawn[elemento - INDICE_FANTASMAS] = (Vector2){(float)x, (float)y};
+					}
 				}
 			}
 			else
@@ -103,6 +106,16 @@ void Mapa::DesregistraMapaRenderizavel()
 
 Vector2 Mapa::GetPlayerSpawn(){
 	return GetMapaGlobal()._playerSpawn;
+}
+
+bool Mapa::GetEnemySpawn(unsigned id, Vector2& pos){
+	auto it = GetMapaGlobal()._enemySpawn.find(id);
+	if(it != GetMapaGlobal()._enemySpawn.end()){
+		pos = it->second;
+		return true;
+	}else{
+		return false;
+	}
 }
 
 double tempoInterp = 0;

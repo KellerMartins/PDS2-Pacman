@@ -11,7 +11,7 @@
 #define MASK_TEXTURE_PATH "assets/models/textureMask.png"
 #define DEFAULT_MODEL_PATH "assets/models/Cube.obj"
 
-#define CAMERA_SPEED 2
+#define CAMERA_SPEED 1
 
 namespace RenderManager{
 
