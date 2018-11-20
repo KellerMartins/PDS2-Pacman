@@ -43,6 +43,7 @@ class Mapa : public GameEvents{
 		static Vector2 GetPlayerSpawn();
 
 		virtual void OnUpdate() override;
+		virtual void OnMenuUpdate() override;
 };
 
 

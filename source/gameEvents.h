@@ -17,6 +17,7 @@ class GameEvents{
     public:
         GameEvents();
         virtual ~GameEvents();
+        GENERATE_EVENT_HEADERS(MenuUpdate)
         GENERATE_EVENT_HEADERS(Update)
         GENERATE_EVENT_HEADERS(Restart)
 };

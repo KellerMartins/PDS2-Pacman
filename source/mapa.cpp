@@ -110,7 +110,18 @@ void Mapa::OnUpdate()
 	{
 		Object3D* objMapa = _objetosMapa.at(i);
 		objMapa->SetColor((1+sin(objMapa->position.x/8 + GetTime()*1))*127, 
-				  		 (1+sin(objMapa->position.z/8 + GetTime()*2))*127, 
-						 (1+cos(objMapa->position.x/8 + objMapa->position.z/8 +GetTime()*3))*127);
+				  		  (1+sin(objMapa->position.z/8 + GetTime()*2))*127, 
+						  (1+cos(objMapa->position.x/8 + objMapa->position.z/8 +GetTime()*3))*127);
+	}
+}
+
+void Mapa::OnMenuUpdate()
+{
+	for(unsigned int i=0; i<_objetosMapa.size(); i++)
+	{
+		Object3D* objMapa = _objetosMapa.at(i);
+		objMapa->SetColor((1+sin(objMapa->position.x/8 + GetTime()*1))*127, 
+				  		  (1+sin(objMapa->position.z/8 + GetTime()*2))*127, 
+						  (1+cos(objMapa->position.x/8 + objMapa->position.z/8 +GetTime()*3))*127);
 	}
 }
