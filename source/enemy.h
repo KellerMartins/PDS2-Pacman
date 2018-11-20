@@ -5,11 +5,13 @@
 #include <raylib.h>
 #include "gameEvents.h"
 #include "mapa.h"
+#include "utils.h"
 #include <time.h>
 #include <cmath>
 #include <cstdlib>
 #include <list>
 #include <algorithm>
+#include <stdexcept>
 
 typedef struct ElementoBusca {
 	int i;
@@ -17,6 +19,7 @@ typedef struct ElementoBusca {
 	float f;
 	float h;
 	float g;
+	//funcao = heuristica + distancia
 }ElementoBusca;
 
 class Enemy : public GameEvents {
@@ -54,7 +57,7 @@ public:
 
 	//Astar
 	void reset_grid();
-	std::list<ElementoBusca> calcula_vizinhos(ElementoBusca elem);
+	std::list<ElementoBusca*> calcula_vizinhos(ElementoBusca* elem);
 	void Astar(int start_x, int start_y, int goal_x, int goal_y);
 
 };

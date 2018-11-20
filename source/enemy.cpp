@@ -144,79 +144,90 @@ void Enemy::reset_grid(){
 	}
 }
 
-std::list<ElementoBusca> Enemy::calcula_vizinhos(ElementoBusca elem){
+std::list<ElementoBusca*> Enemy::calcula_vizinhos(ElementoBusca* elem){
 
-	std::list<ElementoBusca> vizinhos;
-	int i = elem.i;
-	int j = elem.j;
+	std::list<ElementoBusca*> vizinhos;
+	int i = elem->i;
+	int j = elem->j;
 	if(i < LARGURA - 1){
-		vizinhos.push_back(grid[i+1][j]);
+		vizinhos.push_back(&grid[i+1][j]);
 	}
 	if(i > 0)
 	{
-		vizinhos.push_back(grid[i-1][j]);
+		vizinhos.push_back(&grid[i-1][j]);
 	}
 	if(j < ALTURA - 1){
-		vizinhos.push_back(grid[i][j+1]);
+		vizinhos.push_back(&grid[i][j+1]);
 	}
 	if(j > 0){
-		vizinhos.push_back(grid[i][j-1]);
+		vizinhos.push_back(&grid[i][j-1]);
 	}
 	
 	return vizinhos;
 
 }
-void Enemy::Astar(int start_x, int start_y, int goal_x, int goal_y){
-	/*this->reset_grid();
-	std::list<ElementoBusca> OpenSet;
-	std::list<ElementoBusca> ClosedSet;
 
-	OpenSet.push_back(grid[int start_x][int start_y]);
-	ElementoBusca current;
-	ElementoBusca vizinho;
-	std::list<ElementoBusca> vizinhos;
-	bool found_closed = false;
-	bool found_open = false;
-	float temp;
+ElementoBusca* get_at(std::list<ElementoBusca*> &l, unsigned int i)
+{   
+    typename std::list<ElementoBusca*>::iterator it;
+    if(l.size() > i)
+    {
+        auto it = l.begin();
+        std::advance(it, i);
+        return *it;
+    }else{
+        throw std::invalid_argument("Posicao invalida!");
+    }
+}
+
+void Enemy::Astar(int start_x, int start_y, int goal_x, int goal_y){
+	this->reset_grid();
+	std::list<ElementoBusca*> OpenSet;
+	std::list<ElementoBusca*> ClosedSet;
+
+	OpenSet.push_back(&grid[start_x][start_y]);
+	ElementoBusca* current;
+	ElementoBusca* vizinho;
+	std::list<ElementoBusca*> vizinhos;
 	while(!OpenSet.empty()){
 
 		int lowest_f = 0;
-		for(int k = 0; k < OpenSet.size(); k++){
-			if(OpenSet[k].f < OpenSet[lowest_f].f){
+		for(unsigned int k = 0; k < OpenSet.size(); k++){
+			if(get_at(OpenSet,k)->f < get_at(OpenSet,lowest_f)->f){
 				lowest_f = k;
 			}
 		}
 
-		current = OpenSet[lowest_f];
+		current = get_at(OpenSet,lowest_f);
 		OpenSet.remove(current);
 		ClosedSet.push_back(current);
 
 		//Checando os vizinhos
 		vizinhos = this->calcula_vizinhos(current);
 
-		for(int k = 0; k < vizinhos.size(); k++){
-			vizinho = vizinhos[k];
+		for(unsigned int k = 0; k < vizinhos.size(); k++){
+			vizinho = get_at(vizinhos, k);
 			//se o vizinho nao esta no closedSet
-			found_closed = (std::find(ClosedSet.begin(), ClosedSet.end(), vizinho) != ClosedSet.end());
+			bool found_closed = (std::find(ClosedSet.begin(), ClosedSet.end(), vizinho) != ClosedSet.end());
 			if(!found_closed){
-				temp = current.g + 1;
-				found_open = (std::find(OpenSet.begin(), OpenSet.end(), vizinho) != OpenSet.end());
+				float temp = current->g + 1;
+				bool found_open = (std::find(OpenSet.begin(), OpenSet.end(), vizinho) != OpenSet.end());
 				if(found_open){
-					if(temp < vizinho.g){
-						vizinho.g = temp;
+					if(temp < vizinho->g){
+						vizinho->g = temp;
 					}
 				}else{
-					vizinho.g = temp;
+					vizinho->g = temp;
 					OpenSet.push_back(vizinho);
 				}
 
-				vizinho.h = abs(goal_x - current.i) + abs(goa_y - current.j);
-				vizinho.f = vizinho.h + vizinho.g;
+				vizinho->h = abs(goal_x - current->i) + abs(goal_y - current->j);
+				vizinho->f = vizinho->h + vizinho->g;
 			}
 		}
 		
 
-	}*/
+	}
 
 
 }
