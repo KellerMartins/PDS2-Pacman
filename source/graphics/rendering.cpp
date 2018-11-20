@@ -55,8 +55,8 @@ namespace RenderManager{
     void Init(int screenWidth, int screenHeight, std::string windowTitle){
         #ifdef NDEBUG
         SetTraceLog(0);
+        ShowLogo();
         #endif
-
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         InitWindow(screenWidth, screenHeight, windowTitle.c_str());
         #ifdef NDEBUG
@@ -231,7 +231,9 @@ namespace RenderManager{
 
             RenderDebugPrimitives(camera);
 
+            #ifndef NDEBUG
             DrawFPS(0,0);
+            #endif
 
         EndDrawing();
     }

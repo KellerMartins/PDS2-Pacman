@@ -7,6 +7,7 @@ FLAGS= -std=c++14 -L third_party/raylib/lib/ -Wall -Wno-unused-function -I third
 
 ifeq ($(OS),Windows_NT)
 FLAGS += -lraylibWin64 -lopengl32 -lgdi32 -static
+release: FLAGS += -mwindows
 else
 FLAGS += -lraylib -lm -lpthread -ldl -lrt -lX11
 endif
@@ -16,5 +17,5 @@ all:
 	@echo "Build Finished!"
 
 release:
-	$(COMPILER) -O3  -DNDEBUG $(OBJS) $(FLAGS) -o $(APPNAME)
+	$(COMPILER) -O3 -DNDEBUG $(OBJS) $(FLAGS) -o $(APPNAME)
 	@echo "Build Finished!"
