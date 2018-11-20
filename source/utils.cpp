@@ -14,6 +14,15 @@ Vector3 Lerp(Vector3 v0, Vector3 v1, float t) {
                      ((1 - t) * v0.z + t * v1.z)};
 }
 
+Color Lerp(Color v0, Color v1, float t) {
+    if(t<=0) return v0;
+    if(t>1) return v1;
+    return (Color){(unsigned char)((1 - t) * v0.r + t * v1.r),
+                   (unsigned char)((1 - t) * v0.g + t * v1.g),
+                   (unsigned char)((1 - t) * v0.b + t * v1.b),
+                   (unsigned char)((1 - t) * v0.a + t * v1.a)};
+}
+
 float Distance(Vector3 a, Vector3 b){
     return sqrt( (b.x-a.x)*(b.x-a.x) + 
                  (b.y-a.y)*(b.y-a.y) + 

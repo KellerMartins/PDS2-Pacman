@@ -5,7 +5,7 @@
 using namespace std;
 #define VALOR_FRUTA 50
 
-Pacman::Pacman(int x, int y) : modelo("assets/models/pacman/idle/player_idle_0.obj", BLUE),
+Pacman::Pacman(int x, int y) : modelo("assets/models/pacman/idle/player_idle_0.obj", {255,211,0,255}),
 							   andando("assets/models/pacman/walk/player_walk", 6, true),
 							   parado("assets/models/pacman/idle/player_idle", 1, true),
 							   morrendo("assets/models/pacman/die/player_die", 18, false)
@@ -63,6 +63,7 @@ bool Pacman::verifica_posicao(){
 			enemies[i]->getScared();
 		}
 		this->pontuacao+= VALOR_FRUTA;
+		this->modelo.scale = {2,2,2};
 		//Altera o valor no mapa para que o ponto desapareça
 		Mapa::RemoveElementoMapa(ix,iy);
 	}

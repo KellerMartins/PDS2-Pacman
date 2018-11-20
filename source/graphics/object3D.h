@@ -27,6 +27,7 @@ class Object3D{
         void Load3DModel(const std::string modelPath, Color color);
         void SetColor(Color color);
         void SetColor(unsigned char red, unsigned char green, unsigned char blue);
+        Color GetColor();
 
         static void Cache3DModel(const std::string modelPath);
         

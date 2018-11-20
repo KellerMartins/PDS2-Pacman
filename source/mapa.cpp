@@ -1,6 +1,7 @@
 #include "mapa.h"
 
 #include "utils.h"
+#include "enemy.h"
 
 std::string modeloElemento[] = {"",
 								"assets/models/map/wall.obj",
@@ -104,19 +105,49 @@ Vector2 Mapa::GetPlayerSpawn(){
 	return GetMapaGlobal()._playerSpawn;
 }
 
+double tempoInterp = 0;
 void Mapa::OnUpdate()
 {
+	tempoInterp += GetFrameTime()*0.0125;
 	for(unsigned int i=0; i<_objetosMapa.size(); i++)
 	{
 		Object3D* objMapa = _objetosMapa.at(i);
-		objMapa->SetColor((1+sin(objMapa->position.x/8 + GetTime()*1))*127, 
-				  		  (1+sin(objMapa->position.z/8 + GetTime()*2))*127, 
-						  (1+cos(objMapa->position.x/8 + objMapa->position.z/8 +GetTime()*3))*127);
+
+		if(Mapa::GetElementoMapa(objMapa->position.x, objMapa->position.z) == Parede){
+			float val = 0;
+			int luzR = 0;
+			int luzG = 0;
+			int luzB = 0;
+
+			std::vector<Enemy*>& inimigos = Enemy::get_enemies(); 
+			for(Enemy* e : inimigos){
+				Vector3 pos = {(float)e->get_x(), 0, (float)e->get_y()};
+				float distVal = pow(1.0 - Clamp(Distance(objMapa->position, pos)/20.0, 0, 1),3);
+
+				Color corInimigo = e->get_color();
+				luzR += corInimigo.r*distVal;
+				luzG += corInimigo.g*distVal;
+				luzB += corInimigo.b*distVal;
+				val += distVal;
+			}
+
+			val = Clamp(val, 0, 1);
+			luzR = Clamp(luzR, 0, 255);
+			luzG = Clamp(luzG, 0, 255);
+			luzB = Clamp(luzB, 0, 255);
+			Color luz = (Color){(unsigned char)luzR, (unsigned char)luzG, (unsigned char)luzB, 255};
+
+			objMapa->SetColor(Lerp(objMapa->GetColor(), Lerp(BLUE, luz, val), tempoInterp));
+		}
+		else{
+			objMapa->SetColor(Lerp(objMapa->GetColor(), { 255, 211, 0, 255 }, tempoInterp));
+		}
 	}
 }
 
 void Mapa::OnMenuUpdate()
 {
+	tempoInterp = 0;
 	for(unsigned int i=0; i<_objetosMapa.size(); i++)
 	{
 		Object3D* objMapa = _objetosMapa.at(i);

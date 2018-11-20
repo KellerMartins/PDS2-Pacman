@@ -64,3 +64,7 @@ void Object3D::SetColor(Color color){
 void Object3D::SetColor(unsigned char red, unsigned char green, unsigned char blue){
     SetColor((Color){red, green, blue, (unsigned char)255});
 }
+
+Color Object3D::GetColor(){
+    return _color;
+}
