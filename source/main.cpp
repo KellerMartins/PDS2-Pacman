@@ -17,6 +17,7 @@
 int screenWidth = 1920;
 int screenHeight = 1080;
 bool fullscreen = false;
+RenderManager::BlurQuality quality = RenderManager::High;
 
 enum State{Menu, Game};
 State currentState = Menu;
@@ -31,8 +32,8 @@ int main(){
         return 0;
     
 
-    RenderManager::Init(screenWidth, screenHeight, fullscreen, "PDS2 - Pacman");
-    RenderManager::SetBloomQuality(RenderManager::Medium);
+    RenderManager::Init(screenWidth, screenHeight, fullscreen, "Pacman Remake - PDS2");
+    RenderManager::SetBloomQuality(quality);
     RenderManager::SetCameraOffset((Vector3){0.0f, 18.5237f, 7.3416f});
     RenderManager::camera = {{ LARGURA/2, 32.0f, ALTURA/1.9 }, { LARGURA/2, 0.0f, ALTURA/2 }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
 
@@ -101,9 +102,13 @@ void GameState(){
 }
 
 bool OpenConfigWindow(){ 
-    InitWindow(400, 125, "Pacman - PDS2");
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    InitWindow(575, 110, "Opções | Pacman Remake - PDS2");
     
-    int currResolution = 1;
+    Font font = LoadFont("assets/interface/metropolis/Metropolis.fnt");
+    SetTextureFilter(font.texture, FILTER_TRILINEAR);
+
+    int resolution = 2;
     while(1){
         if(WindowShouldClose()){
             //Fecha a janela
@@ -112,17 +117,25 @@ bool OpenConfigWindow(){
         }
 
         //Define os retângulos dos botões da janela
-        Rectangle previous = { 10, 50, 20, 30 };
-        Rectangle next = { 210, 50, 20, 30 };
-        Rectangle play = { 255, 45, 125, 70 };
-        Rectangle fullscr = { 10, 87, 30, 27 };
-        
+        Rectangle play = { 430, 10, 135, 90 };
+        Rectangle fullscr = { 175, 75, 240, 27 };
+        Rectangle previousRes = { 175, 5, 20, 30 };
+        Rectangle nextRes = { 400, 5, 20, 30 };
+        Rectangle previousQual = { 175, 40, 20, 30 };
+        Rectangle nextQual = { 400, 40, 20, 30 };
+
         //Checa se clicou em um deles ou apertou a tecla correspondente ao comando
-        if((CheckCollisionPointRec(GetMousePosition(), previous) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) ||  IsKeyPressed(KEY_LEFT))
-            currResolution -= currResolution-1>=0? 1:0;
+        if((CheckCollisionPointRec(GetMousePosition(), previousRes) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+            resolution -= resolution-1>=0? 1:0;
         
-        if((CheckCollisionPointRec(GetMousePosition(), next) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) ||  IsKeyPressed(KEY_RIGHT))
-            currResolution += currResolution+1<=3? 1:0;
+        if((CheckCollisionPointRec(GetMousePosition(), nextRes) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+            resolution += resolution+1<=3? 1:0;
+
+        if((CheckCollisionPointRec(GetMousePosition(), previousQual) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+            quality = (RenderManager::BlurQuality) (quality-1>=0? quality-1:quality);
+        
+        if((CheckCollisionPointRec(GetMousePosition(), nextQual) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+            quality = (RenderManager::BlurQuality) (quality+1<=2? quality+1:quality);
         
         if(CheckCollisionPointRec(GetMousePosition(), fullscr) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             fullscreen = !fullscreen;
@@ -131,20 +144,20 @@ bool OpenConfigWindow(){
             break; //Termina o loop da tela de configuraçoes
         
         //Define a resolução a ser usada
-        switch(currResolution){
-            case 0:
+        switch(resolution){
+            case 3:
                 screenWidth = 1920;
                 screenHeight = 1080;
             break;
-            case 1:
+            case 2:
                 screenWidth = 1366;
                 screenHeight = 768;
             break;
-            case 2:
+            case 1:
                 screenWidth = 1280;
                 screenHeight = 720;
             break;
-            case 3:
+            case 0:
             default:
                 screenWidth = 800;
                 screenHeight = 450;
@@ -153,31 +166,32 @@ bool OpenConfigWindow(){
         
         //> Renderização
         BeginDrawing();
-           //Define a cor de fundo
-           ClearBackground(RAYWHITE);
-           //Renderiza o texto
-           DrawTextEx(GetFontDefault(),"Escolha a resolução da tela: ", (Vector2){7,5}, 30, 1, BLACK); 
-           DrawTextEx(GetFontDefault(),FormatText("%4d x %4d",screenWidth,screenHeight),(Vector2){35, 41}, 33,2, BLACK); 
-           DrawTextEx(GetFontDefault(),"Tela cheia",(Vector2){46, 85}, 33, 1, BLACK); 
-           
-           //Renderiza o botão de tela cheia (se ativo ou não)
-            DrawCircle(fullscr.x+fullscr.width/2, fullscr.y+fullscr.height/2, fullscr.height/2, fullscreen? (Color)GREEN : (Color)RED);
-           
-           //Renderiza o botão de jogar
-           DrawRectangleRec(play, GREEN);
-           DrawText("Jogar!",273, 65, 30, WHITE); 
-            
-           //Renderiza as setas de resolução
-           if(currResolution>0)
-                DrawTextEx(GetFontDefault(),"<",(Vector2){15, 41}, 33, 2, BLACK); 
-           else
-               DrawTextEx(GetFontDefault(),"<",(Vector2){15, 41}, 33, 2, LIGHTGRAY); 
-           
-           if(currResolution<2){
-               DrawTextEx(GetFontDefault(),">",(Vector2){215, 41}, 33, 2, BLACK);
-           }else{
-              DrawTextEx(GetFontDefault(),">",(Vector2){215, 41}, 37, 2, LIGHTGRAY);
-           }
+
+        //Define a cor de fundo
+        Color settingsCol = {255,191,0,255};
+        ClearBackground({35,45,60,255});
+        //Renderiza o texto
+        DrawTextEx(font,"Resolução", (Vector2){5,5}, 30, 1, RAYWHITE); 
+        DrawTextEx(font,FormatText("%4d x %4d",screenWidth,screenHeight),(Vector2){195, 5}, 33,2, settingsCol); 
+
+        const char* qualityString = quality==2 ?" Alta " : (quality==1? "Média" : "Baixa ");
+        DrawTextEx(font,"Qualidade", (Vector2){5,40}, 30, 1, RAYWHITE); 
+        DrawTextEx(font, qualityString, (Vector2){255, 40}, 33, 2, settingsCol); 
+
+        DrawTextEx(font,"Tela cheia", (Vector2){5, 75}, 30, 1, RAYWHITE); 
+        DrawTextEx(font, fullscreen? "   Ativado" : "Desativado", (Vector2){205, 75}, 33, 2, settingsCol); 
+        
+        //Renderiza o botão de jogar
+        DrawRectangleRec(play, {255,191,0,255});
+        DrawTextEx(font, "Jogar!",(Vector2){455, 40}, 30, 0, WHITE); 
+        
+        //Renderiza as setas de resolução
+        DrawTextEx(font,"<",(Vector2){175, 5}, 33, 2, resolution>0? settingsCol : (Color)DARKGRAY); 
+        DrawTextEx(font,">",(Vector2){398, 5}, 33, 2, resolution<3? settingsCol : (Color)DARKGRAY);
+
+        //Renderiza as setas de qualidade
+        DrawTextEx(font,"<",(Vector2){175, 40}, 33, 2, quality>0? settingsCol : (Color)DARKGRAY); 
+        DrawTextEx(font,">",(Vector2){398, 40}, 33, 2, quality<2? settingsCol : (Color)DARKGRAY);
            
         EndDrawing();
     }
