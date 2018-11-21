@@ -18,7 +18,10 @@ namespace RenderManager{
     //Resolutions
     int _screenWidth = 0;
     int _screenHeight= 0;
-    int _blurDownscale = 0;
+
+    //Blur settings
+    int _blurDownscale = 1;
+    int _blurQuality = 0;
 
     //Shaders and uniform locations
     Shader _blurPass;
@@ -28,10 +31,10 @@ namespace RenderManager{
     Shader _screenShader;
     Shader _copyRTShader;
     int _blurPassPixelSizeLoc;
+    int _blurPassBlurQualityLoc;
     int _copyRTPixelSizeLoc;
 
     //Render Textures and textures
-    RenderTexture2D _maskRT;
     RenderTexture2D _baseRT;
     RenderTexture2D _tempRT;
     RenderTexture2D _blurRT;
@@ -92,7 +95,6 @@ namespace RenderManager{
 
             UnloadTexture(_blackTexture);
         
-            UnloadRenderTexture(_maskRT);
             UnloadRenderTexture(_baseRT);
             UnloadRenderTexture(_tempRT);
             UnloadRenderTexture(_blurRT);
@@ -103,39 +105,53 @@ namespace RenderManager{
         _isInitialized = false;
     }
 
-    void SetBloomDownscale(unsigned value){
-        _blurDownscale = value;
+    void SetBloomQuality(BlurQuality quality){
+        switch(quality){
+            case Low:
+                _blurDownscale = 3;
+                _blurQuality = 0;
+            break;
+
+            case Medium:
+                _blurDownscale = 2;
+                _blurQuality = 1;
+            break;
+
+            case High:
+                _blurDownscale = 1;
+                _blurQuality = 2;
+            break;
+        }
+        
 
         if(_isInitialized){
             UnloadRenderTexture(_blurRT);
             UnloadRenderTexture(_vBlurRT);
         }
-        _blurRT = LoadRenderTexture(_screenWidth/(1+_blurDownscale), _screenHeight/(1+_blurDownscale));
-        _vBlurRT = LoadRenderTexture(_screenWidth/(1+_blurDownscale), _screenHeight/(1+_blurDownscale));
+        _blurRT = LoadRenderTexture(_screenWidth/(_blurDownscale), _screenHeight/(_blurDownscale));
+        _vBlurRT = LoadRenderTexture(_screenWidth/(_blurDownscale), _screenHeight/(_blurDownscale));
     };
 
     void SetResolution(int width, int height){
 
         //Unload rts if they already been created
         if(_isInitialized){
-            UnloadRenderTexture(_maskRT);
             UnloadRenderTexture(_baseRT);
             UnloadRenderTexture(_tempRT);
             UnloadRenderTexture(_blurRT);
             UnloadRenderTexture(_vBlurRT);
         }
 
-        _screenWidth = width<800? 800 : width;
-        _screenHeight = height<600? 600 : height;
+        _screenWidth = width<MIN_WIDTH? MIN_WIDTH : width;
+        _screenHeight = height<MIN_HEIGHT? MIN_HEIGHT : height;
 
         SetWindowSize(_screenWidth, _screenHeight);
 
-        _maskRT = LoadRenderTexture(_screenWidth, _screenHeight);
         _baseRT = LoadRenderTexture(_screenWidth, _screenHeight);
         _tempRT = LoadRenderTexture(_screenWidth, _screenHeight);
 
-        _blurRT = LoadRenderTexture(_screenWidth/(1+_blurDownscale), _screenHeight/(1+_blurDownscale));
-        _vBlurRT = LoadRenderTexture(_screenWidth/(1+_blurDownscale), _screenHeight/(1+_blurDownscale));
+        _blurRT = LoadRenderTexture(_screenWidth/(_blurDownscale), _screenHeight/(_blurDownscale));
+        _vBlurRT = LoadRenderTexture(_screenWidth/(_blurDownscale), _screenHeight/(_blurDownscale));
 
         SetShaderUniforms();
     }
@@ -177,6 +193,7 @@ namespace RenderManager{
     void SetShaderUniforms(){
 
         _blurPassPixelSizeLoc = GetShaderLocation(_blurPass, "xyHalfPixelSize_zwPixelSize");
+        _blurPassBlurQualityLoc = GetShaderLocation(_blurPass, "blurQuality");
         _copyRTPixelSizeLoc = GetShaderLocation(_copyRTShader, "PixelSize");
 
         int texIndex = 1;
@@ -243,8 +260,8 @@ namespace RenderManager{
     }
 
     void RenderBaseEffect(){
-        //Render mask to _maskRT
-        BeginTextureMode(_maskRT);    
+        //Render mask to _baseRT
+        BeginTextureMode(_baseRT);    
             BeginMode3D(camera);  
                 for(Object3D* m : _objectsToRender){
                     if(!m->HasModel() || !m->shouldRender) continue;
@@ -256,10 +273,10 @@ namespace RenderManager{
             EndMode3D();
         EndTextureMode();
 
-        //Render mask and base with outline shader to _tempRT        
+        //Apply outline shader in _baseRT and copy to _tempRT        
         BeginTextureMode(_tempRT);
             BeginShaderMode(_outlineFilter);
-                DrawTexturePro(_maskRT.texture, (Rectangle){ 0, 0, (float)_screenWidth, (float)-_screenHeight }, 
+                DrawTexturePro(_baseRT.texture, (Rectangle){ 0, 0, (float)_screenWidth, (float)-_screenHeight }, 
                                                 (Rectangle){ 0, 0, (float)_screenWidth, (float)_screenHeight }, (Vector2){ 0, 0 }, 0,  WHITE);
             EndShaderMode();
         EndTextureMode();
@@ -276,6 +293,16 @@ namespace RenderManager{
 
             EndShaderMode();
         EndTextureMode();
+
+        //Apply bicubic filter, downsample and copy _tempRT to _blurRT
+        BeginTextureMode(_blurRT);
+            BeginShaderMode(_copyRTShader);
+            DrawTexturePro(_tempRT.texture, (Rectangle){ 0, 0, (float)_screenWidth, (float)-_screenHeight }, 
+                                            (Rectangle){ 0, 0, (float)_blurRT.texture.width, 
+                                                               (float)_blurRT.texture.height }, 
+                                            (Vector2){ 0, 0 }, 0,  WHITE);
+            EndShaderMode();
+        EndTextureMode();
     }
 
     void RenderBloom(){
@@ -283,11 +310,13 @@ namespace RenderManager{
         BeginTextureMode(_vBlurRT);
             BeginShaderMode(_blurPass);
 
-                Vector4 pixelSize4 = {0, (1.0f/_screenHeight)/2.0f, 0, 1.0f/_screenHeight};
+                Vector4 pixelSize4 = {0, (1.0f/_blurRT.texture.height)/2.0f, 0, 1.0f/_blurRT.texture.height};
                 SetShaderValue(_blurPass, _blurPassPixelSizeLoc, (const float*) &pixelSize4, 4);
+                SetShaderValuei(_blurPass, _blurPassBlurQualityLoc, (const int*) &_blurQuality, 1);
 
-                DrawTexturePro(_baseRT.texture, (Rectangle){ 0, 0, (float)_screenWidth, (float)-_screenHeight }, 
-                                                (Rectangle){ 0, 0, (float)_vBlurRT.texture.width, (float)_vBlurRT.texture.height }, (Vector2){ 0, 0 }, 0,  WHITE);
+                Rectangle src = (Rectangle){ 0, 0, (float)_blurRT.texture.width, (float)-_blurRT.texture.height };
+                Rectangle dest = (Rectangle){ 0, 0, (float)_vBlurRT.texture.width, (float)_vBlurRT.texture.height };
+                DrawTexturePro(_blurRT.texture, src, dest, (Vector2){ 0, 0 }, 0,  WHITE);
 
             EndShaderMode();
         EndTextureMode();
@@ -296,10 +325,13 @@ namespace RenderManager{
         BeginTextureMode(_blurRT);
             BeginShaderMode(_blurPass);
 
-                pixelSize4 = (Vector4){(1.0f/_screenWidth)/2.0f, 0, 1.0f/_screenWidth,0};
+                pixelSize4 = (Vector4){(1.0f/_vBlurRT.texture.width)/2.0f, 0, 1.0f/_vBlurRT.texture.width,0};
                 SetShaderValue(_blurPass, _blurPassPixelSizeLoc, (const float*) &pixelSize4, 4);
-                DrawTexturePro(_vBlurRT.texture, (Rectangle){ 0, 0, (float)_vBlurRT.texture.width, (float)-_vBlurRT.texture.height }, 
-                                                (Rectangle){ 0, 0, (float)_blurRT.texture.width, (float)_blurRT.texture.height }, (Vector2){ 0, 0 }, 0,  WHITE);
+                SetShaderValuei(_blurPass, _blurPassBlurQualityLoc, (const int*) &_blurQuality, 1);
+
+                src = (Rectangle){ 0, 0, (float)_vBlurRT.texture.width, (float)-_vBlurRT.texture.height };
+                dest = (Rectangle){ 0, 0, (float)_blurRT.texture.width, (float)_blurRT.texture.height };
+                DrawTexturePro(_vBlurRT.texture, src, dest, (Vector2){ 0, 0 }, 0,  WHITE);
             EndShaderMode();
         EndTextureMode();
     }

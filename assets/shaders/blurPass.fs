@@ -7,7 +7,7 @@ uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 
 uniform vec4 xyHalfPixelSize_zwPixelSize;
-uniform int kernelSize;
+uniform int blurQuality;
 
 out vec4 finalColor;
 
@@ -165,7 +165,13 @@ vec3 GaussianBlur15( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 p
 }
 
 void main()
-{
-    finalColor.rgb = GaussianBlur63(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+{   
+    if(blurQuality == 2)
+        finalColor.rgb = GaussianBlur63(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+    else if(blurQuality == 1)
+        finalColor.rgb = GaussianBlur35(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+    else if(blurQuality == 0)
+        finalColor.rgb = GaussianBlur15(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+
     finalColor.a = 1.0;
 }

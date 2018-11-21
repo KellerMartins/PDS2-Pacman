@@ -32,7 +32,7 @@ int main(){
     
 
     RenderManager::Init(screenWidth, screenHeight, fullscreen, "PDS2 - Pacman");
-    RenderManager::SetBloomDownscale(1);
+    RenderManager::SetBloomQuality(RenderManager::Medium);
     RenderManager::SetCameraOffset((Vector3){0.0f, 18.5237f, 7.3416f});
     RenderManager::camera = {{ LARGURA/2, 32.0f, ALTURA/1.9 }, { LARGURA/2, 0.0f, ALTURA/2 }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE};
 

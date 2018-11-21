@@ -7,6 +7,8 @@
 #include "object3D.h"
 #include "debugPrimitives.h"
 
+#define MIN_WIDTH 800
+#define MIN_HEIGHT 450
 
 #define MASK_TEXTURE_PATH "assets/models/textureMask.png"
 #define DEFAULT_MODEL_PATH "assets/models/Cube.obj"
@@ -14,6 +16,8 @@
 #define CAMERA_SPEED 1
 
 namespace RenderManager{
+
+        enum BlurQuality{Low, Medium, High};
 
         extern Camera camera;
 
@@ -29,7 +33,7 @@ namespace RenderManager{
         int GetWidth();
         int GetHeight();
         void SetResolution(int width, int height);
-        void SetBloomDownscale(unsigned value);
+        void SetBloomQuality(BlurQuality quality);
         void ReloadShaders();
         void Render();
 
