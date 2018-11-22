@@ -17,7 +17,7 @@
 int screenWidth = 1920;
 int screenHeight = 1080;
 bool fullscreen = false;
-RenderManager::BlurQuality quality = RenderManager::High;
+RenderManager::BlurQuality quality = RenderManager::Medium;
 
 enum State{Menu, Game};
 State currentState = Menu;
@@ -108,7 +108,7 @@ bool OpenConfigWindow(){
     Font font = LoadFont("assets/interface/metropolis/Metropolis.fnt");
     SetTextureFilter(font.texture, FILTER_TRILINEAR);
 
-    int resolution = 2;
+    int resolution = 3;
     while(1){
         if(WindowShouldClose()){
             //Fecha a janela
