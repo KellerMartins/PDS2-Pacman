@@ -25,7 +25,7 @@ void Mapa::CarregaArquivo(std::string arq)
 
 	for(int y = 0; y < ALTURA; y++)
 	{
-		for(int x = LARGURA-1; x >= 0; x--)
+		for(int x = 0; x < LARGURA; x++)
 		{
 			int elemento;
 			arquivo >> elemento;
