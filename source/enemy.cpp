@@ -212,7 +212,7 @@ void Enemy::Astar(int start_x, int start_y, int goal_x, int goal_y){
 			vizinho = get_at(vizinhos, k);
 			//se o vizinho nao esta no closedSet
 			bool found_closed = (std::find(ClosedSet.begin(), ClosedSet.end(), vizinho) != ClosedSet.end());
-			if(!found_closed && !vizinho.obstacle){
+			if(!found_closed && !vizinho->obstacle){
 				float temp = current->g + 1;
 				bool found_open = (std::find(OpenSet.begin(), OpenSet.end(), vizinho) != OpenSet.end());
 				if(found_open){
