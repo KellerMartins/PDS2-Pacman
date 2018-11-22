@@ -19,6 +19,7 @@ typedef struct ElementoBusca {
 	float f;
 	float h;
 	float g;
+	bool obstacle;
 	//funcao = heuristica + distancia
 }ElementoBusca;
 
