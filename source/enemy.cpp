@@ -35,6 +35,8 @@ Enemy::Enemy(int x, int y, Color color){
 			grid[i][j].j = j;
 			if(Mapa::GetElementoMapa(i,j) == ElementoMapa::Parede) {
 				grid[i][j].obstacle = true;
+			}else{
+				grid[i][j].obstacle = false; 
 			}
 		}
 	}
