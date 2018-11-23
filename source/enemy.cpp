@@ -65,7 +65,6 @@ void Enemy::OnUpdate(){
 	if(this->timerScatter <= 0){
 		this->isScatter = false;
 	}
-	this->set_goal(this->goalX, this->goalY, pac_x,pac_y, dirX, dirY);
 	int ix = this->x;
 	int iy = this->y;
 	int dx = 0;
@@ -79,6 +78,7 @@ void Enemy::OnUpdate(){
 		iy+=dy;
 	}while(dx != 0 || dy != 0);
 
+	this->set_goal(this->goalX, this->goalY, pac_x,pac_y, dirX, dirY);
 	timerMovimento += GetFrameTime()*velocidade;
 	visualX = Lerp(x, x+direcao_x, timerMovimento);
 	visualY = Lerp(y, y+direcao_y, timerMovimento);

@@ -12,11 +12,31 @@ void Pinky::set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, i
                 goal_y = 1;
                 if(this->timerScatter > 0){
                     this->timerScatter -= 4*GetFrameTime();
-                    std::cout<<this->timerScatter<<std::endl;
+                    
                 }
             }
             else{
-                //retorna 4 posicoes a frente do pacman
+                //O goal esta duas posicoes na frente do pacman
+                //direita
+                if(dir_x == 1 && dir_y == 0){
+                    goal_x = pac_x + 2;
+                    goal_y = pac_y;
+                }
+                //esquerda
+                else if(dir_x == -1 && dir_y == 0){
+                    goal_x = pac_x - 2;
+                    goal_y = pac_y;
+                }
+                //cima
+                else if(dir_x == 0 && dir_y == -1){
+                    goal_x = pac_x;
+                    goal_y = pac_y - 2;
+                }
+                //baixo
+                else if(dir_x == 0 && dir_y == 1){
+                    goal_x = pac_x;
+                    goal_y = pac_y + 2;
+                }
             }
         }else{
             goal_x = LARGURA - 2;
