@@ -13,16 +13,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-typedef struct ElementoBusca {
-	int i;
-	int j;
-	float f;
-	float h;
-	float g;
-	bool obstacle;
-	//funcao = heuristica + distancia
-}ElementoBusca;
-
 class Enemy : public GameEvents {
 protected:
 	int isScared;
@@ -34,8 +24,7 @@ protected:
 	float velocidade;
 	float timerAnimacao;
 	
-	//Astar
-	ElementoBusca grid[LARGURA][ALTURA];
+	//Floyd-Wasrshall
 	int itr_x;
 	int itr_y;
 
@@ -56,10 +45,7 @@ public:
 	int get_x();
 	int get_y();
 
-	//Astar
-	void reset_grid();
-	std::list<ElementoBusca*> calcula_vizinhos(ElementoBusca* elem);
-	void Astar(int start_x, int start_y, int goal_x, int goal_y);
+	//Floyd-Wasrshall
 
 };
 

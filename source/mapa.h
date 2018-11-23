@@ -27,14 +27,14 @@ class Mapa : public GameEvents{
 
 		Vector2 _playerSpawn;
 		std::map<unsigned, Vector2> _enemySpawn;
+		int _proximo[LARGURA*ALTURA][LARGURA*ALTURA];
 		
 		void RegistraMapaRenderizavel();
 		void DesregistraMapaRenderizavel();
-
-		Mapa() {};
+		void GerarCaminho();
 		
 	public:
-		
+		Mapa();
 		~Mapa();
 
 		void CarregaArquivo(std::string arq);
@@ -47,6 +47,9 @@ class Mapa : public GameEvents{
 
 		virtual void OnUpdate() override;
 		virtual void OnMenuUpdate() override;
+
+		static void ObtemCaminho(int startX, int startY, int goalX, int goalY, int &stepX, int &stepY);
+
 };
 
 

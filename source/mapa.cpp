@@ -1,5 +1,5 @@
 #include "mapa.h"
-
+#include <climits>
 #include "utils.h"
 #include "enemy.h"
 
@@ -13,6 +13,8 @@ Mapa& Mapa::GetMapaGlobal(){
 	static Mapa mapaGlobal;
 	return mapaGlobal;
 }
+
+Mapa::Mapa(){}
 
 Mapa::~Mapa()
 {
@@ -50,6 +52,89 @@ void Mapa::CarregaArquivo(std::string arq)
 	}
 	DesregistraMapaRenderizavel();
 	RegistraMapaRenderizavel();
+	GerarCaminho();
+}
+
+void Mapa::GerarCaminho(){
+	//Criando a matriz geradora de caminhos
+	int** _caminhos = new int*[LARGURA*ALTURA];
+	for(int i = 0; i < LARGURA*ALTURA; i++){
+		_caminhos[i] = new int[LARGURA*ALTURA];
+	}
+	//Inicializando
+	for(int i = 0; i < LARGURA*ALTURA; i++){
+		for(int j = 0; j < LARGURA*ALTURA; j++){
+			_caminhos[i][j] = INT_MAX/4;
+			_proximo[i][j] = -1;
+		}
+	}
+
+	for(int y = 0; y < ALTURA; y++)
+	{
+		for(int x = 0; x < LARGURA; x++)
+		{
+			int i = x+(y*LARGURA);
+			_caminhos[i][i] = 0;
+			_proximo[i][i] = i;
+			//Define a distancia entre vizinhos e o atual como 1
+			if(_mapa[x][y]!= Parede){
+				int iv = -1;
+				if(x+1 < LARGURA && _mapa[x+1][y]!=Parede){
+					iv = (x+1)+(y*LARGURA);
+				}
+				if(x-1 >= 0 && _mapa[x-1][y]!=Parede){
+					iv = (x-1)+(y*LARGURA);
+				}
+				if(y+1 < ALTURA && _mapa[x][y+1]!=Parede){
+					iv = x +((y+1)*LARGURA);
+				}
+				if(y-1 >= 0 && _mapa[x][y-1]!=Parede){
+					iv = x +((y-1)*LARGURA);
+				}
+				if(iv >= 0){
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
+				}
+			}			
+		}
+	}
+
+	for(int k = 0; k < LARGURA*ALTURA; k++){
+		for(int i = 0; i < LARGURA*ALTURA; i++){
+			for(int j = 0; j < LARGURA*ALTURA; j++){
+				if(_caminhos[i][j] > _caminhos[i][k] + _caminhos[k][j]){
+					_caminhos[i][j] = _caminhos[i][k] + _caminhos[k][j];
+					_proximo[i][j] = _proximo[i][k];
+				}
+			}
+		}
+	}
+
+	int v = (LARGURA-2) + ((ALTURA-2)*LARGURA);
+	for(int x = 0; x < LARGURA; x++){
+		for(int y = 0; y < ALTURA; y++){
+			int u = x + (y*LARGURA);
+			std::cout<< (_proximo[u][v]<0? "-1" : " 0") << " ";
+		}
+		std::cout<< "\n";
+	}
+	std::cout<< "\n";
+}
+
+void Mapa::ObtemCaminho(int startX, int startY, int goalX, int goalY, int &stepX, int &stepY){
+	int u = startX + (startY*LARGURA);
+	int v = goalX + (goalY*LARGURA);
+	Mapa &mapa = GetMapaGlobal();
+	if(mapa._proximo[u][v] >= 0 && startX != goalX && startY != goalY){
+		stepX = mapa._proximo[u][v] % LARGURA;
+		stepY = (mapa._proximo[u][v] - stepX)/LARGURA;
+	}
+	else{
+		stepX = -1;
+		stepY = -1;
+	}
 }
 
 ElementoMapa Mapa::GetElementoMapa(unsigned int x, unsigned int y)

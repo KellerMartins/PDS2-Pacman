@@ -20,26 +20,9 @@ Enemy::Enemy(int x, int y, Color color){
 	this->isScared = 0;
 	this->velocidade = 2.5;
 	this->timerAnimacao = 0.0;
-	this->itr_x = 11;//aleatorio
-	this->itr_y = 2;
+	this->itr_x = 0;//aleatorio
+	this->itr_y = 0;
 
-	//Astar
-	for(int i = 0; i< LARGURA; i++)
-	{
-		for(int j = 0; j< ALTURA; j++)
-		{
-			grid[i][j].f = 0;
-			grid[i][j].g = 0;
-			grid[i][j].h = 0;
-			grid[i][j].i = i;
-			grid[i][j].j = j;
-			if(Mapa::GetElementoMapa(i,j) == ElementoMapa::Parede) {
-				grid[i][j].obstacle = true;
-			}else{
-				grid[i][j].obstacle = false; 
-			}
-		}
-	}
 }
 
 void Enemy::adiciona_inimigo(Enemy* enemy){
@@ -96,6 +79,19 @@ void Enemy::morrer(){
 
 void Enemy::OnUpdate(){
 
+	Mapa::ObtemCaminho(this->x, this->y, 1,5, this->itr_x, this->itr_y);
+	int ix = 1;
+	int iy = 1;
+	int gx = LARGURA - 2;
+	int gy = ALTURA - 2;
+	
+	while(ix >=0 && iy >=0){
+		int tx = ix;
+		int ty = iy;
+		Mapa::ObtemCaminho(ix, iy, gx,gy, ix, iy);
+		RenderManager::DrawDebugLine((Vector3){(float)tx, 0.5, (float)ty}, (Vector3){(float)ix, 0.5, (float)iy}, WHITE);
+	}
+	
 	this->calcula_direcao(this->itr_x,this->itr_y);
 
 	this->timerAnimacao += GetFrameTime() * 9/*Frames por segundo*/;
@@ -133,106 +129,4 @@ int Enemy::get_x(){
 }
 int Enemy::get_y(){
 	return this->y;
-}
-
-//Astar
-
-void Enemy::reset_grid(){
-	for(int i = 0; i< LARGURA; i++)
-	{
-		for(int j = 0; j< ALTURA; j++)
-		{
-			grid[i][j].f = 0;
-			grid[i][j].g = 0;
-			grid[i][j].h = 0;
-		}
-	}
-}
-
-std::list<ElementoBusca*> Enemy::calcula_vizinhos(ElementoBusca* elem){
-
-	std::list<ElementoBusca*> vizinhos;
-	int i = elem->i;
-	int j = elem->j;
-	if(i < LARGURA - 1){
-		vizinhos.push_back(&grid[i+1][j]);
-	}
-	if(i > 0)
-	{
-		vizinhos.push_back(&grid[i-1][j]);
-	}
-	if(j < ALTURA - 1){
-		vizinhos.push_back(&grid[i][j+1]);
-	}
-	if(j > 0){
-		vizinhos.push_back(&grid[i][j-1]);
-	}
-	
-	return vizinhos;
-
-}
-
-ElementoBusca* get_at(std::list<ElementoBusca*> &l, unsigned int i)
-{   
-    typename std::list<ElementoBusca*>::iterator it;
-    if(l.size() > i)
-    {
-        auto it = l.begin();
-        std::advance(it, i);
-        return *it;
-    }else{
-        throw std::invalid_argument("Posicao invalida!");
-    }
-}
-
-void Enemy::Astar(int start_x, int start_y, int goal_x, int goal_y){
-	this->reset_grid();
-	std::list<ElementoBusca*> OpenSet;
-	std::list<ElementoBusca*> ClosedSet;
-
-	OpenSet.push_back(&grid[start_x][start_y]);
-	ElementoBusca* current;
-	ElementoBusca* vizinho;
-	std::list<ElementoBusca*> vizinhos;
-	while(!OpenSet.empty()){
-
-		int lowest_f = 0;
-		for(unsigned int k = 0; k < OpenSet.size(); k++){
-			if(get_at(OpenSet,k)->f < get_at(OpenSet,lowest_f)->f){
-				lowest_f = k;
-			}
-		}
-
-		current = get_at(OpenSet,lowest_f);
-		OpenSet.remove(current);
-		ClosedSet.push_back(current);
-
-		//Checando os vizinhos
-		vizinhos = this->calcula_vizinhos(current);
-
-		for(unsigned int k = 0; k < vizinhos.size(); k++){
-			vizinho = get_at(vizinhos, k);
-			//se o vizinho nao esta no closedSet
-			bool found_closed = (std::find(ClosedSet.begin(), ClosedSet.end(), vizinho) != ClosedSet.end());
-			if(!found_closed && !vizinho->obstacle){
-				float temp = current->g + 1;
-				bool found_open = (std::find(OpenSet.begin(), OpenSet.end(), vizinho) != OpenSet.end());
-				if(found_open){
-					if(temp < vizinho->g){
-						vizinho->g = temp;
-					}
-				}else{
-					vizinho->g = temp;
-					OpenSet.push_back(vizinho);
-				}
-
-				vizinho->h = abs(goal_x - current->i) + abs(goal_y - current->j);
-				vizinho->f = vizinho->h + vizinho->g;
-			}
-		}
-		
-
-	}
-
-
 }

@@ -145,7 +145,7 @@ void Pacman::OnUpdate(){
 	}
 	this->modelo.position = (Vector3){(float)x, 0, (float)y};
 
-	RenderManager::CameraFollow(this->modelo.position);
+	//RenderManager::CameraFollow(this->modelo.position);
 
 	//RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, WHITE);
 }
