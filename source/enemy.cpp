@@ -14,14 +14,14 @@ std::vector<Enemy*> Enemy::enemies(0);
 Enemy::Enemy(int x, int y, Color color){
 	this->x = x;
 	this->y = y;
+	this->visualX = x;
+	this->visualY = y;
 	this->color = color;
 	this->direcao_y = 0;
 	this->direcao_x = 0;
 	this->isScared = 0;
-	this->velocidade = 2.5;
-	this->timerAnimacao = 0.0;
-	this->itr_x = 0;//aleatorio
-	this->itr_y = 0;
+	this->velocidade = 5;
+	this->timerMovimento = 0.0;
 
 }
 
@@ -37,38 +37,7 @@ std::vector<Enemy*> &Enemy::get_enemies()
 {
 	return enemies;
 }
-void Enemy::calcula_direcao(int goal_x, int goal_y){
-	if(goal_x < 0 || goal_y < 0)
-	{
-		this->direcao_y = 0;
-		this->direcao_x = 0;
-	}
-	else if(goal_x > this->x && Mapa::GetElementoMapa(floorf(x+1),roundf(y)) != ElementoMapa::Parede)
-	{
-		this->y = roundf(y);
-		this->direcao_y = 0;
-		this->direcao_x = 1;
-	}
-	else if(goal_x < this->x && Mapa::GetElementoMapa(ceilf(x-1),roundf(y)) != ElementoMapa::Parede)
-	{
-		this->y = roundf(y);
-		this->direcao_y = 0;
-		this->direcao_x = -1;
-	}
-	else if(goal_y < this->y && Mapa::GetElementoMapa(roundf(x),ceilf(y-1)) != ElementoMapa::Parede)
-	{
-		this->x = roundf(x);
-		this->direcao_y = -1;
-		this->direcao_x = 0;
-	}
-	else if(goal_y > this->y && Mapa::GetElementoMapa(roundf(x),floorf(y+1)) != ElementoMapa::Parede)
-	{
-		this->x = roundf(x);
-		this->direcao_y = 1;
-		this->direcao_x = 0;
-	}
 
-}
 bool Enemy::verifica_posicao(){
 	int ix = roundf(this->x + this->direcao_x*0.5);
 	int iy = roundf(this->y + this->direcao_y*0.5);
@@ -85,48 +54,47 @@ void Enemy::morrer(){
 	this->isScared = 0;
 }
 
+int gx = 1;
+int gy = 1;
+
 void Enemy::OnUpdate(){
 
-	
 	int ix = this->x;
 	int iy = this->y;
-	int gx = 1;
-	int gy = 1;
+	int dx = 0;
+	int dy = 0;
 	
-	while(ix >=0 && iy >=0){
-		int tx = ix;
-		int ty = iy;
-		Mapa::ObtemCaminho(ix, iy, gx,gy, ix, iy);
-		if(ix >= 0)
-			RenderManager::DrawDebugLine((Vector3){(float)tx, 0.5, (float)ty}, (Vector3){(float)ix, 0.5, (float)iy}, this->color);
+	do{
+		Mapa::ObtemDirecao(ix, iy, gx,gy, dx, dy);
+		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, this->color);
+		ix+=dx;
+		iy+=dy;
+	}while(dx != 0 || dy != 0);
+
+	timerMovimento += GetFrameTime()*velocidade;
+	visualX = Lerp(x, x+direcao_x, timerMovimento);
+	visualY = Lerp(y, y+direcao_y, timerMovimento);
+	if(timerMovimento > 1){
+		timerMovimento = 0;
+		x += direcao_x;
+		y += direcao_y;
+		visualX = x;
+		visualY = y;
+		Mapa::ObtemDirecao(x, y, gx,gy, this->direcao_x, this->direcao_y);
+
+		//DEBUG: move um ponto de destino global toda vez que um objeto o alcança
+		if(x == gx && y == gy){
+			if(gx == 1){
+				gx = LARGURA-2;
+				gy = ALTURA-2;
+			}else{
+				gx = 1;
+				gy = 1;
+			}
+		}
 	}
 
-	ix = round(this->x);
-	iy = round(this->y);
-
-	Mapa::ObtemCaminho(ix, iy, 1,1, this->itr_x, this->itr_y);
-	RenderManager::DrawDebugSphere((Vector3){(float)itr_x, 0.5, (float)itr_y}, 0.25f, this->color);
-	RenderManager::DrawDebugSphere((Vector3){(float)ix, 0.5, (float)iy}, 0.75f, this->color);
-	this->calcula_direcao(this->itr_x,this->itr_y);
-
-	this->timerAnimacao += GetFrameTime() * 9/*Frames por segundo*/;
-	
-	
-	bool colidiu = this->verifica_posicao();
-	if(!colidiu){
-		this->x = fModulus(this->x + this->direcao_x*this->velocidade*GetFrameTime(), LARGURA);
-		this->y = fModulus(this->y + this->direcao_y*this->velocidade*GetFrameTime(), ALTURA);
-		
-		timerAnimacao = (int)timerAnimacao > 5/*Num frames - 1*/ ? 0 : timerAnimacao;
-		//this->model.Load3DModel(walk[(int)timerAnimacao]);
-	}else{
-		timerAnimacao = (int)timerAnimacao > 0/*Num frames - 1*/ ? 0 : timerAnimacao;
-		//this->model.Load3DModel(idle[(int)timerAnimacao]);
-	}
-
-	//this->model.position = (Vector3){(float)x, 0, (float)y};
-
-	RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, this->color);
+	RenderManager::DrawDebugCube((Vector3){(float)visualX, 0.5, (float)visualY}, (Vector3){1,1,1}, this->color);
 }
 
 void Enemy::getScared(){

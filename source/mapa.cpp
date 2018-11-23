@@ -123,17 +123,26 @@ void Mapa::GerarCaminho(){
 	}
 }
 
-void Mapa::ObtemCaminho(int startX, int startY, int goalX, int goalY, int &stepX, int &stepY){
+void Mapa::ObtemDirecao(unsigned int startX, unsigned int startY, unsigned int goalX, unsigned int goalY, int &stepX, int &stepY){
+	if(startX >= LARGURA || startY >= ALTURA|| goalX >= LARGURA || goalY >=ALTURA){
+		stepX = 0;
+		stepY = 0;
+		return;
+	}
+
 	int u = startX + (startY*LARGURA);
 	int v = goalX + (goalY*LARGURA);
 	Mapa &mapa = GetMapaGlobal();
 	if(mapa._proximo[u][v] >= 0 && (startX != goalX || startY != goalY)){
 		stepX = mapa._proximo[u][v] % LARGURA;
 		stepY = (mapa._proximo[u][v] - stepX)/LARGURA;
+
+		stepX -= startX;
+		stepY -= startY;
 	}
 	else{
-		stepX = -1;
-		stepY = -1;
+		stepX = 0;
+		stepY = 0;
 	}
 }
 

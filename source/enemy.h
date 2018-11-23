@@ -19,19 +19,16 @@ protected:
 	int direcao_y;
 	int direcao_x;
 	Color color;
-	float x, y;
+	float visualX, visualY;//TODO: substituir pelo x/y do Object3D
+	int x, y;
 	static std::vector<Enemy*> enemies;
 	float velocidade;
-	float timerAnimacao;
-	
-	//Floyd-Wasrshall
-	int itr_x;
-	int itr_y;
+	float timerMovimento;
 
 
 public:
 	Enemy(int x, int y, Color color);
-	void calcula_direcao(int goal_x, int goal_y);
+	void valida_direcao(int goal_x, int goal_y);
 	//virtual void set_goal() = 0; -> maquina de estados!!
 	static void adiciona_inimigo(Enemy* enemy);
 	static void remove_inimigos();
