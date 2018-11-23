@@ -6,7 +6,7 @@
 #include "gameEvents.h"
 #include "mapa.h"
 #include "utils.h"
-#include <time.h>
+#include <ctime>
 #include <cmath>
 #include <cstdlib>
 #include <list>
@@ -23,6 +23,7 @@ protected:
 	static std::vector<Enemy*> enemies;
 	float velocidade;
 	float timerAnimacao;
+	float timerScatter;
 	
 	//Floyd-Wasrshall
 	int itr_x;
@@ -32,7 +33,7 @@ protected:
 public:
 	Enemy(int x, int y, Color color);
 	void calcula_direcao(int goal_x, int goal_y);
-	//virtual void set_goal() = 0; -> maquina de estados!!
+	virtual void set_goal(int &goal_x, int &goal_y) = 0;
 	static void adiciona_inimigo(Enemy* enemy);
 	static void remove_inimigos();
 	static std::vector<Enemy*> &get_enemies();

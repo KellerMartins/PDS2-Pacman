@@ -20,6 +20,7 @@ Enemy::Enemy(int x, int y, Color color){
 	this->isScared = 0;
 	this->velocidade = 2.5;
 	this->timerAnimacao = 0.0;
+	this->timerScatter = 0.0;
 	this->itr_x = 0;//aleatorio
 	this->itr_y = 0;
 
@@ -92,6 +93,7 @@ void Enemy::OnUpdate(){
 	int iy = this->y;
 	int gx = 1;
 	int gy = 1;
+	//set_goal(int gx, int gy);
 	
 	while(ix >=0 && iy >=0){
 		int tx = ix;
@@ -104,7 +106,7 @@ void Enemy::OnUpdate(){
 	ix = round(this->x);
 	iy = round(this->y);
 
-	Mapa::ObtemCaminho(ix, iy, 1,1, this->itr_x, this->itr_y);
+	//Mapa::ObtemCaminho(ix, iy, 1,1, this->itr_x, this->itr_y);
 	RenderManager::DrawDebugSphere((Vector3){(float)itr_x, 0.5, (float)itr_y}, 0.25f, this->color);
 	RenderManager::DrawDebugSphere((Vector3){(float)ix, 0.5, (float)iy}, 0.75f, this->color);
 	this->calcula_direcao(this->itr_x,this->itr_y);
@@ -116,7 +118,7 @@ void Enemy::OnUpdate(){
 	if(!colidiu){
 		this->x = fModulus(this->x + this->direcao_x*this->velocidade*GetFrameTime(), LARGURA);
 		this->y = fModulus(this->y + this->direcao_y*this->velocidade*GetFrameTime(), ALTURA);
-		
+		Mapa::ObtemCaminho(ix, iy, 1,1, this->itr_x, this->itr_y);	
 		timerAnimacao = (int)timerAnimacao > 5/*Num frames - 1*/ ? 0 : timerAnimacao;
 		//this->model.Load3DModel(walk[(int)timerAnimacao]);
 	}else{
