@@ -127,7 +127,7 @@ void Mapa::ObtemCaminho(int startX, int startY, int goalX, int goalY, int &stepX
 	int u = startX + (startY*LARGURA);
 	int v = goalX + (goalY*LARGURA);
 	Mapa &mapa = GetMapaGlobal();
-	if(mapa._proximo[u][v] >= 0 && startX != goalX && startY != goalY){
+	if(mapa._proximo[u][v] >= 0 && (startX != goalX || startY != goalY)){
 		stepX = mapa._proximo[u][v] % LARGURA;
 		stepY = (mapa._proximo[u][v] - stepX)/LARGURA;
 	}
