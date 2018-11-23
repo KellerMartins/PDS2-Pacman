@@ -20,7 +20,7 @@ Enemy::Enemy(int x, int y, Color color){
 	this->direcao_y = 0;
 	this->direcao_x = 0;
 	this->isScared = 0;
-	this->velocidade = 5;
+	this->velocidade = 2.5;
 	this->timerMovimento = 0.0;
 
 }
@@ -38,16 +38,6 @@ std::vector<Enemy*> &Enemy::get_enemies()
 	return enemies;
 }
 
-bool Enemy::verifica_posicao(){
-	int ix = roundf(this->x + this->direcao_x*0.5);
-	int iy = roundf(this->y + this->direcao_y*0.5);
-
-	if(Mapa::GetElementoMapa(ix,iy) == ElementoMapa::Parede) {
-		return true;
-	}
-
-	return false;
-}
 void Enemy::morrer(){
 	this->x = 0;
 	this->y = 0;
@@ -63,6 +53,7 @@ void Enemy::OnUpdate(){
 	int iy = this->y;
 	int dx = 0;
 	int dy = 0;
+	//set_goal(int gx, int gy);
 	
 	do{
 		Mapa::ObtemDirecao(ix, iy, gx,gy, dx, dy);
@@ -107,9 +98,9 @@ int Enemy::get_isScared(){
 Color Enemy::get_color(){
 	return this->color;
 }
-int Enemy::get_x(){
-	return this->x;
+float Enemy::get_x(){
+	return this->visualX;
 }
-int Enemy::get_y(){
-	return this->y;
+float Enemy::get_y(){
+	return this->visualY;
 }
