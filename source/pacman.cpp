@@ -38,10 +38,10 @@ bool Pacman::verifica_posicao(){
 	
 	for(unsigned int i = 0; i < enemies.size(); ++i)
 	{
-		int enemy_x = enemies[i]->get_x();
-		int enemy_y = enemies[i]->get_y();
+		float enemy_x = enemies[i]->get_x();
+		float enemy_y = enemies[i]->get_y();
 
-		if(enemy_x == ix && enemy_y == iy){
+		if(abs(enemy_x - x)<0.5 && abs(enemy_y - y)<0.5){
 			if(enemies[i]->get_isScared()){
 				enemies[i]->morrer();
 				this->pontuacao += 50;
