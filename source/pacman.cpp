@@ -5,6 +5,11 @@
 using namespace std;
 #define VALOR_FRUTA 50
 
+int Pacman::x_ToGhost = 0;
+int Pacman::y_ToGhost = 0;
+int Pacman::dirx_ToGhost = 0;
+int Pacman::diry_ToGhost = 0;
+
 Pacman::Pacman(int x, int y) : modelo("assets/models/pacman/idle/player_idle_0.obj", {255,211,0,255}),
 							   andando("assets/models/pacman/walk/player_walk", 6, true),
 							   parado("assets/models/pacman/idle/player_idle", 1, true),
@@ -39,7 +44,7 @@ bool Pacman::verifica_posicao(){
 			if(enemies[i]->get_isScared()){
 				enemies[i]->morrer();
 				this->pontuacao += 50;
-			}else{
+			}else if(enemies[i]->get_vivo()){
 				this->morrer();
 				return 0;				
 			}
@@ -150,6 +155,10 @@ void Pacman::OnUpdate(){
 	//RenderManager::CameraFollow(this->modelo.position);
 
 	//RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, WHITE);
+	x_ToGhost = round(this->x);
+	y_ToGhost = round(this->y);
+	dirx_ToGhost = this->direcao_x;
+	diry_ToGhost = this->direcao_y;
 }
 
 void Pacman::OnRestart(){
@@ -159,4 +168,16 @@ void Pacman::OnRestart(){
 	this->direcao_y = 0;
 	this->direcao_x = 0;
 	this->vivo = true;
+}
+int &Pacman::get_x(){
+	return x_ToGhost;
+}
+int &Pacman::get_y(){
+	return y_ToGhost;
+}
+int &Pacman::get_dirx(){
+	return dirx_ToGhost;
+}
+int &Pacman::get_diry(){
+	return diry_ToGhost;
 }

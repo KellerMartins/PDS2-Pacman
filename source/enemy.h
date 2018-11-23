@@ -6,6 +6,7 @@
 #include "gameEvents.h"
 #include "mapa.h"
 #include "utils.h"
+#include "pacman.h"
 #include <ctime>
 #include <cmath>
 #include <cstdlib>
@@ -25,11 +26,15 @@ protected:
 	float velocidade;
 	float timerMovimento;
 	float timerScatter;
+	int scatter;
+	bool isScatter;
+	int goalX, goalY;
+	bool vivo;
 
 
 public:
 	Enemy(int x, int y, Color color);
-	virtual void set_goal(int &goal_x, int &goal_y) = 0;
+	virtual void set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y) = 0;
 	static void adiciona_inimigo(Enemy* enemy);
 	static void remove_inimigos();
 	static std::vector<Enemy*> &get_enemies();
@@ -40,6 +45,7 @@ public:
 	Color get_color();
 	float get_x();
 	float get_y();
+	bool get_vivo();
 
 	//Floyd-Wasrshall
 

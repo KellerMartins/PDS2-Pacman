@@ -1,5 +1,6 @@
 #include "enemy.h"
 #include "utils.h"
+#include <chrono>
 using namespace std;
 
 #define MAPA_VALIDO 0
@@ -22,6 +23,13 @@ Enemy::Enemy(int x, int y, Color color){
 	this->isScared = 0;
 	this->velocidade = 2.5;
 	this->timerMovimento = 0.0;
+	this->timerScatter = 0.0;
+	this->scatter = 20;
+	this->isScatter = false;
+	this->vivo = true;
+	this->goalX = 1.0;
+	this->goalY = 1.0;
+
 
 }
 
@@ -39,24 +47,33 @@ std::vector<Enemy*> &Enemy::get_enemies()
 }
 
 void Enemy::morrer(){
-	this->x = 0;
-	this->y = 0;
+	this->vivo = false;
 	this->isScared = 0;
 }
 
-int gx = 1;
-int gy = 1;
-
 void Enemy::OnUpdate(){
 
+	int pac_x = Pacman::get_x();
+	int pac_y = Pacman::get_y();
+	int dirX =  Pacman::get_dirx();
+	int dirY =  Pacman::get_diry();
+
+	timerScatter += GetFrameTime();
+	if(this->timerScatter > this->scatter) {
+		this->isScatter = true;
+	}
+	if(this->timerScatter <= 0){
+		this->isScatter = false;
+	}
+	this->set_goal(this->goalX, this->goalY, pac_x,pac_y, dirX, dirY);
 	int ix = this->x;
 	int iy = this->y;
 	int dx = 0;
 	int dy = 0;
-	//set_goal(int gx, int gy);
+	//set_goal(int this->goalX, int this->goalY);
 	
 	do{
-		Mapa::ObtemDirecao(ix, iy, gx,gy, dx, dy);
+		Mapa::ObtemDirecao(ix, iy, this->goalX,this->goalY, dx, dy);
 		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, this->color);
 		ix+=dx;
 		iy+=dy;
@@ -71,17 +88,11 @@ void Enemy::OnUpdate(){
 		y += direcao_y;
 		visualX = x;
 		visualY = y;
-		Mapa::ObtemDirecao(x, y, gx,gy, this->direcao_x, this->direcao_y);
+		Mapa::ObtemDirecao(x, y, this->goalX,this->goalY, this->direcao_x, this->direcao_y);
 
 		//DEBUG: move um ponto de destino global toda vez que um objeto o alcança
-		if(x == gx && y == gy){
-			if(gx == 1){
-				gx = LARGURA-2;
-				gy = ALTURA-2;
-			}else{
-				gx = 1;
-				gy = 1;
-			}
+		if(!this->vivo && x == this->goalX && y == this->goalY){
+			this->vivo = true;
 		}
 	}
 
@@ -103,4 +114,7 @@ float Enemy::get_x(){
 }
 float Enemy::get_y(){
 	return this->visualY;
+}
+bool Enemy::get_vivo(){
+	return this->vivo;
 }

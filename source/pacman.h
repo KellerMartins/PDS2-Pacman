@@ -21,6 +21,10 @@ private:
 	int direcao_y;
 	int direcao_x;
 	float x, y;
+	static int x_ToGhost;
+	static int y_ToGhost;
+	static int dirx_ToGhost;
+	static int diry_ToGhost;
 	float velocidade;
 	float timerAnimacao;
 	Animation andando;
@@ -33,6 +37,11 @@ public:
 	void morrer();
 	virtual void OnUpdate();
 	virtual void OnRestart();
+	static int &get_x();
+	static int &get_y();
+	static int &get_dirx();
+	static int &get_diry();
+	
 };
 
 
