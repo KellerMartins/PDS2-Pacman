@@ -38,24 +38,32 @@ std::vector<Enemy*> &Enemy::get_enemies()
 	return enemies;
 }
 void Enemy::calcula_direcao(int goal_x, int goal_y){
-
-	if(goal_x > this->x)
+	if(goal_x < 0 || goal_y < 0)
 	{
+		this->direcao_y = 0;
+		this->direcao_x = 0;
+	}
+	else if(goal_x > this->x && Mapa::GetElementoMapa(floorf(x+1),roundf(y)) != ElementoMapa::Parede)
+	{
+		this->y = roundf(y);
 		this->direcao_y = 0;
 		this->direcao_x = 1;
 	}
-	else if(goal_x < this->x)
+	else if(goal_x < this->x && Mapa::GetElementoMapa(ceilf(x-1),roundf(y)) != ElementoMapa::Parede)
 	{
+		this->y = roundf(y);
 		this->direcao_y = 0;
 		this->direcao_x = -1;
 	}
-	else if(goal_y < this->y)
+	else if(goal_y < this->y && Mapa::GetElementoMapa(roundf(x),ceilf(y-1)) != ElementoMapa::Parede)
 	{
+		this->x = roundf(x);
 		this->direcao_y = -1;
 		this->direcao_x = 0;
 	}
-	else if(goal_y > this->y)
+	else if(goal_y > this->y && Mapa::GetElementoMapa(roundf(x),floorf(y+1)) != ElementoMapa::Parede)
 	{
+		this->x = roundf(x);
 		this->direcao_y = 1;
 		this->direcao_x = 0;
 	}
@@ -79,19 +87,26 @@ void Enemy::morrer(){
 
 void Enemy::OnUpdate(){
 
-	Mapa::ObtemCaminho(this->x, this->y, 1,5, this->itr_x, this->itr_y);
-	int ix = 1;
-	int iy = 1;
-	int gx = LARGURA - 2;
-	int gy = ALTURA - 2;
+	
+	int ix = this->x;
+	int iy = this->y;
+	int gx = 1;
+	int gy = 1;
 	
 	while(ix >=0 && iy >=0){
 		int tx = ix;
 		int ty = iy;
 		Mapa::ObtemCaminho(ix, iy, gx,gy, ix, iy);
-		RenderManager::DrawDebugLine((Vector3){(float)tx, 0.5, (float)ty}, (Vector3){(float)ix, 0.5, (float)iy}, WHITE);
+		if(ix >= 0)
+			RenderManager::DrawDebugLine((Vector3){(float)tx, 0.5, (float)ty}, (Vector3){(float)ix, 0.5, (float)iy}, this->color);
 	}
-	
+
+	ix = round(this->x);
+	iy = round(this->y);
+
+	Mapa::ObtemCaminho(ix, iy, 1,1, this->itr_x, this->itr_y);
+	RenderManager::DrawDebugSphere((Vector3){(float)itr_x, 0.5, (float)itr_y}, 0.25f, this->color);
+	RenderManager::DrawDebugSphere((Vector3){(float)ix, 0.5, (float)iy}, 0.75f, this->color);
 	this->calcula_direcao(this->itr_x,this->itr_y);
 
 	this->timerAnimacao += GetFrameTime() * 9/*Frames por segundo*/;

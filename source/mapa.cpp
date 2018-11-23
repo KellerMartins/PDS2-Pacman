@@ -64,7 +64,7 @@ void Mapa::GerarCaminho(){
 	//Inicializando
 	for(int i = 0; i < LARGURA*ALTURA; i++){
 		for(int j = 0; j < LARGURA*ALTURA; j++){
-			_caminhos[i][j] = INT_MAX/4;
+			_caminhos[i][j] = INT_MAX/2;
 			_proximo[i][j] = -1;
 		}
 	}
@@ -76,22 +76,32 @@ void Mapa::GerarCaminho(){
 			int i = x+(y*LARGURA);
 			_caminhos[i][i] = 0;
 			_proximo[i][i] = i;
+
 			//Define a distancia entre vizinhos e o atual como 1
-			if(_mapa[x][y]!= Parede){
-				int iv = -1;
+			if(_mapa[x][y] != Parede){
 				if(x+1 < LARGURA && _mapa[x+1][y]!=Parede){
-					iv = (x+1)+(y*LARGURA);
+					int iv = (x+1)+(y*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
 				}
 				if(x-1 >= 0 && _mapa[x-1][y]!=Parede){
-					iv = (x-1)+(y*LARGURA);
+					int iv = (x-1)+(y*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
 				}
 				if(y+1 < ALTURA && _mapa[x][y+1]!=Parede){
-					iv = x +((y+1)*LARGURA);
+					int iv = x +((y+1)*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
 				}
 				if(y-1 >= 0 && _mapa[x][y-1]!=Parede){
-					iv = x +((y-1)*LARGURA);
-				}
-				if(iv >= 0){
+					int iv = x +((y-1)*LARGURA);
 					_caminhos[i][iv] = 1;
 					_caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
@@ -111,16 +121,6 @@ void Mapa::GerarCaminho(){
 			}
 		}
 	}
-
-	int v = (LARGURA-2) + ((ALTURA-2)*LARGURA);
-	for(int x = 0; x < LARGURA; x++){
-		for(int y = 0; y < ALTURA; y++){
-			int u = x + (y*LARGURA);
-			std::cout<< (_proximo[u][v]<0? "-1" : " 0") << " ";
-		}
-		std::cout<< "\n";
-	}
-	std::cout<< "\n";
 }
 
 void Mapa::ObtemCaminho(int startX, int startY, int goalX, int goalY, int &stepX, int &stepY){
