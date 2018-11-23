@@ -27,12 +27,6 @@ Pacman::Pacman(int x, int y) : modelo("assets/models/pacman/idle/player_idle_0.o
 bool Pacman::verifica_posicao(){
 	int ix = roundf(this->x);
 	int iy = roundf(this->y);
-	int nextx = roundf(this->x + this->direcao_x*0.5);
-	int nexty = roundf(this->y + this->direcao_y*0.5);
-	
-	if(Mapa::GetElementoMapa(nextx,nexty) == ElementoMapa::Parede) {
-		return true;
-	}
 
 	std::vector<Enemy*> &enemies = Enemy::get_enemies();
 	
@@ -67,8 +61,16 @@ bool Pacman::verifica_posicao(){
 		//Altera o valor no mapa para que o ponto desapareça
 		Mapa::RemoveElementoMapa(ix,iy);
 	}
+
+	int nextx = roundf(this->x + this->direcao_x*0.5);
+	int nexty = roundf(this->y + this->direcao_y*0.5);
+	if(Mapa::GetElementoMapa(nextx,nexty) == ElementoMapa::Parede) {
+		return true;
+	}else{
+		return false;
+	}
 	
-	return false;
+	
 }
 
 void Pacman::calcula_direcao(){
