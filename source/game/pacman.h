@@ -34,12 +34,18 @@ public:
 	void calcula_direcao();
 	bool verifica_posicao();
 	void morrer();
+
+	bool IsAlive();
+	int GetScore();
+	unsigned GetLifes();
+
 	virtual void OnUpdate();
 	virtual void OnRestart();
-	static int &get_x();
-	static int &get_y();
-	static int &get_dirx();
-	static int &get_diry();
+
+	static int get_x();
+	static int get_y();
+	static int get_dirx();
+	static int get_diry();
 	
 };
 

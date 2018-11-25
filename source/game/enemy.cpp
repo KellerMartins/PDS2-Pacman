@@ -9,25 +9,27 @@
 
 std::vector<Enemy*> Enemy::enemies;
 
-Enemy::Enemy(int x, int y, Color color){
+Enemy::Enemy(int x, int y, Color color) : model(DEFAULT_MODEL_PATH,color){
+	this->spawnX = x;
+	this->spawnY = y;
 	this->x = x;
 	this->y = y;
-	this->visualX = x;
-	this->visualY = y;
-	this->color = color;
+	this->model.position = {(float)x, 0, (float)y};
 	this->direcao_y = 0;
 	this->direcao_x = 0;
-	this->isScared = 0;
+
+	this->scared = false;
+	this->scatter = false;
+	this->alive = true;
+
+	this->color = color;
 	this->velocidade = 2.5;
+
 	this->timerMovimento = 0.0;
 	this->timerScatter = 0.0;
-	this->scatter = 20;
-	this->isScatter = false;
-	this->vivo = true;
+	
 	this->goalX = 1.0;
 	this->goalY = 1.0;
-
-
 }
 
 void Enemy::adiciona_inimigo(Enemy* enemy){
@@ -43,9 +45,17 @@ std::vector<Enemy*> &Enemy::get_enemies()
 	return enemies;
 }
 
+void Enemy::getScared(){
+	if(alive){
+		scared = true;
+		model.SetColor(PURPLE);
+	}
+}
+
 void Enemy::morrer(){
-	this->vivo = false;
-	this->isScared = 0;
+	alive = false;
+	scared = false;
+	model.SetColor(WHITE);
 }
 
 void Enemy::OnUpdate(){
@@ -56,11 +66,11 @@ void Enemy::OnUpdate(){
 	int dirY =  Pacman::get_diry();
 
 	timerScatter += GetFrameTime();
-	if(this->timerScatter > this->scatter) {
-		this->isScatter = true;
+	if(this->timerScatter > SCATTER_TIME) {
+		this->scatter = true;
 	}
 	if(this->timerScatter <= 0){
-		this->isScatter = false;
+		this->scatter = false;
 	}
 
 	int newGoalX,newGoalY;
@@ -74,16 +84,16 @@ void Enemy::OnUpdate(){
 
 	timerMovimento += GetFrameTime()*velocidade;
 	if(abs(x-Modulus(x+direcao_x, LARGURA)) != LARGURA-1){
-		visualX = Lerp(x, x+direcao_x, timerMovimento);
+		model.position.x = Lerp(x, x+direcao_x, timerMovimento);
 	}else{
-		visualX = x+direcao_x;
+		model.position.x = x+direcao_x;
 		timerMovimento = 1;
 	}
 
 	if(abs(y-Modulus(y+direcao_y, ALTURA)) != ALTURA-1){
-		visualY = Lerp(y, y+direcao_y, timerMovimento);
+		model.position.z = Lerp(y, y+direcao_y, timerMovimento);
 	}else{
-		visualY = y+direcao_y;
+		model.position.z = y+direcao_y;
 		timerMovimento = 1;
 	}
 
@@ -91,12 +101,13 @@ void Enemy::OnUpdate(){
 		timerMovimento = 0;
 		x = Modulus(x+direcao_x, LARGURA);
 		y = Modulus(y+direcao_y, ALTURA);
-		visualX = x;
-		visualY = y;
+		model.position.x = x;
+		model.position.z = y;
 		Mapa::ObtemDirecao(x, y, this->goalX,this->goalY, this->direcao_x, this->direcao_y);
 
-		if(!this->vivo && x == this->goalX && y == this->goalY){
-			this->vivo = true;
+		if(!this->alive && x == this->goalX && y == this->goalY){
+			this->alive = true;
+			model.SetColor(color);
 		}
 	}
 
@@ -112,27 +123,39 @@ void Enemy::OnUpdate(){
 		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, this->color);
 		ix+=dx;
 		iy+=dy;
-	}while(dx != 0 || dy != 0);*/
+	}while(dx != 0 || dy != 0);
 
-	RenderManager::DrawDebugCube((Vector3){(float)visualX, 0.5, (float)visualY}, (Vector3){1,1,1}, this->color);
+	RenderManager::DrawDebugCube((Vector3){(float)model.position.x, 0.5, (float)model.position.z}, (Vector3){1,1,1}, this->color);
+	*/
 }
 
-void Enemy::getScared(){
-	this->isScared = 1;
+void Enemy::OnRestart(){
+	model.position = {(float)spawnX, 0, (float)spawnY};
+	direcao_x = 0;
+	direcao_y = 0;
+	x = spawnX;
+	y = spawnY;
+	scatter = false;
+	scared = false;
+	alive = true;
 }
 
-int Enemy::get_isScared(){
-	return this->isScared;
+bool Enemy::isScared(){
+	return this->scared;
 }
+
 Color Enemy::get_color(){
-	return this->color;
+	return scared? (Color)PURPLE : (alive? color : (Color)WHITE);
 }
+
 float Enemy::get_x(){
-	return this->visualX;
+	return this->model.position.x;
 }
+
 float Enemy::get_y(){
-	return this->visualY;
+	return this->model.position.z;
 }
-bool Enemy::get_vivo(){
-	return this->vivo;
+
+bool Enemy::get_alive(){
+	return this->alive;
 }

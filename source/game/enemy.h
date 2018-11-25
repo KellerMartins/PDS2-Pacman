@@ -12,24 +12,30 @@
 #include "pacman.h"
 #include "../utils.h"
 
+#define SCATTER_TIME 20
 
 class Enemy : public GameEvents {
 protected:
-	int isScared;
+	Object3D model;
+	int spawnX;
+	int spawnY;
+	int x, y;
 	int direcao_y;
 	int direcao_x;
-	Color color;
-	float visualX, visualY;//TODO: substituir pelo x/y do Object3D
-	int x, y;
-	static std::vector<Enemy*> enemies;
+
+	bool scatter;
+	bool scared;
+	bool alive;
+	
 	float velocidade;
+	Color color;
+	
+	static std::vector<Enemy*> enemies;
+	
 	float timerMovimento;
 	float timerScatter;
-	int scatter;
-	bool isScatter;
+	
 	int goalX, goalY;
-	bool vivo;
-
 
 public:
 	Enemy(int x, int y, Color color);
@@ -38,16 +44,15 @@ public:
 	static void remove_inimigos();
 	static std::vector<Enemy*> &get_enemies();
 	void morrer();
-	void OnUpdate();
 	void getScared();
-	int get_isScared();
+	bool isScared();
 	Color get_color();
 	float get_x();
 	float get_y();
-	bool get_vivo();
+	bool get_alive();
 
-	//Floyd-Wasrshall
-
+	virtual void OnUpdate();
+	virtual void OnRestart();
 };
 
 

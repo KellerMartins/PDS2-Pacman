@@ -4,10 +4,10 @@ Blinky::Blinky(int x, int y):
     Enemy(x,y, RED){}
 
 void Blinky::set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y){
-    if(this->vivo){
-        if(!this->isScared){
+    if(alive){
+        if(!scared){
             //Depois de um tempo o fantasma vai para o seu canto
-            if(isScatter){
+            if(scatter){
                 goal_x = 1;
                 goal_y = 1;
                 if(this->timerScatter > 0){

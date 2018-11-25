@@ -240,7 +240,7 @@ bool Mapa::GetEnemySpawn(unsigned id, Vector2& pos){
 	}
 }
 
-double tempoInterp = 0;
+double tempoInterp = 1;
 void Mapa::OnUpdate()
 {
 	tempoInterp += GetFrameTime()*0.0125;
@@ -257,7 +257,7 @@ void Mapa::OnUpdate()
 			std::vector<Enemy*>& inimigos = Enemy::get_enemies(); 
 			for(Enemy* e : inimigos){
 				Vector3 pos = {(float)e->get_x(), 0, (float)e->get_y()};
-				float distVal = Smoothstep(0.4,0.8,1.0 - Distance(objMapa->position, pos)/7.0);
+				float distVal = Smoothstep(0.4,0.8,1.0 - Distance(objMapa->position, pos)/4.0);
 
 				Color corInimigo = e->get_color();
 				luzR += corInimigo.r*distVal;
@@ -282,12 +282,18 @@ void Mapa::OnUpdate()
 
 void Mapa::OnMenuUpdate()
 {
-	tempoInterp = 0;
+	tempoInterp += GetFrameTime()*0.0125;
 	for(unsigned int i=0; i<_objetosMapa.size(); i++)
 	{
 		Object3D* objMapa = _objetosMapa.at(i);
-		objMapa->SetColor((1+sin(objMapa->position.x/8 + GetTime()*1))*127, 
-				  		  (1+sin(objMapa->position.z/8 + GetTime()*2))*127, 
-						  (1+cos(objMapa->position.x/8 + objMapa->position.z/8 +GetTime()*3))*127);
+		Color col = {(unsigned char)((1+sin(objMapa->position.x/8 + GetTime()*1))*127), 
+				  	 (unsigned char)((1+sin(objMapa->position.z/8 + GetTime()*2))*127), 
+					 (unsigned char)((1+cos(objMapa->position.x/8 + objMapa->position.z/8 +GetTime()*3))*127)};
+		
+		objMapa->SetColor(Lerp(objMapa->GetColor(), col, tempoInterp));
 	}
+}
+
+void Mapa::OnRestart(){
+	tempoInterp = 0;
 }

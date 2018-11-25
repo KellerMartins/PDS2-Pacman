@@ -4,9 +4,9 @@ Inky::Inky(int x, int y):
     Enemy(x,y, {12,250,255,255}){}
 
 void Inky::set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y){
-    if(this->vivo){
-        if(!this->isScared){
-           if(isScatter){
+    if(alive){
+        if(!scared){
+           if(scatter){
                 goal_x = 1;
                 goal_y = ALTURA - 2;
                 if(this->timerScatter > 0){

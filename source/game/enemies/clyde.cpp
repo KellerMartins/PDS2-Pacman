@@ -4,9 +4,9 @@ Clyde::Clyde(int x, int y):
     Enemy(x,y,YELLOW){}
 
 void Clyde::set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y){
-    if(this->vivo){
-        if(!this->isScared){
-            if(isScatter){
+    if(alive){
+        if(!scared){
+            if(scatter){
                 goal_x = LARGURA - 2;
                 goal_y = ALTURA - 2;
                 if(this->timerScatter > 0){

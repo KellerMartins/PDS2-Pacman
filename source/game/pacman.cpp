@@ -41,10 +41,10 @@ bool Pacman::verifica_posicao(){
 		float enemy_y = enemies[i]->get_y();
 
 		if(abs(enemy_x - x)<0.5 && abs(enemy_y - y)<0.5){
-			if(enemies[i]->get_isScared()){
+			if(enemies[i]->isScared()){
 				enemies[i]->morrer();
 				this->pontuacao += 50;
-			}else if(enemies[i]->get_vivo()){
+			}else if(enemies[i]->get_alive()){
 				this->morrer();
 				return 0;				
 			}
@@ -62,7 +62,6 @@ bool Pacman::verifica_posicao(){
 			enemies[i]->getScared();
 		}
 		this->pontuacao+= VALOR_FRUTA;
-		this->modelo.scale = {2,2,2};
 		//Altera o valor no mapa para que o ponto desapareça
 		Mapa::RemoveElementoMapa(ix,iy);
 	}
@@ -145,10 +144,6 @@ void Pacman::OnUpdate(){
 	}else{
 		morrendo.SetTimer(timerAnimacao);
 		this->modelo.Load3DModel(morrendo.GetCurrentFrame());
-
-		if(morrendo.Finished()){
-			TriggerRestart();
-		}
 	}
 	this->modelo.position = (Vector3){(float)x, 0, (float)y};
 
@@ -162,21 +157,37 @@ void Pacman::OnUpdate(){
 
 void Pacman::OnRestart(){
 	Vector2 spawn = Mapa::GetPlayerSpawn();
-	this->x = spawn.x;
-	this->y = spawn.y;
-	this->direcao_y = 0;
-	this->direcao_x = 0;
-	this->vivo = true;
+	modelo.position = {spawn.x, 0, spawn.y};
+	x = spawn.x;
+	y = spawn.y;
+	direcao_y = 0;
+	direcao_x = 0;
+	vivo = true;
+	parado.SetTimer(0);
+	modelo.Load3DModel(parado.GetCurrentFrame());
 }
-int &Pacman::get_x(){
+
+int Pacman::get_x(){
 	return x_ToGhost;
 }
-int &Pacman::get_y(){
+int Pacman::get_y(){
 	return y_ToGhost;
 }
-int &Pacman::get_dirx(){
+int Pacman::get_dirx(){
 	return dirx_ToGhost;
 }
-int &Pacman::get_diry(){
+int Pacman::get_diry(){
 	return diry_ToGhost;
+}
+
+bool Pacman::IsAlive(){
+	return vivo;
+}
+
+int Pacman::GetScore(){
+	return pontuacao;
+}
+
+unsigned Pacman::GetLifes(){
+	return vidas;
 }

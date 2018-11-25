@@ -69,6 +69,11 @@ namespace Game{
         GameEvents::TriggerMenuUpdate();
         UI::DrawImage("assets/interface/title.png",0.5,0.4,0.75,0.75);
         UI::DrawTextCentered("Press space", 0.5, 0.8, 7, 0.0, { 246, 196, 2, 255 });
+
+        if(IsKeyDown(KEY_SPACE)){
+            GameEvents::TriggerRestart();
+            SetState(Game::GameStart);
+        }
     }
 
     
@@ -76,20 +81,40 @@ namespace Game{
         UI::SetFont("assets/interface/intro/IntroMetal.fnt");
     }
     void GameStartStateUpdate(){
-        if(stateTimer < 1){
-            UI::DrawTextCentered("START!", 0.5, 0.5, 7, 0.0, WHITE);
+        if(stateTimer < 2){
+            UI::DrawTextCentered("START!", 0.5, 0.4, 7, 0.0, WHITE);
             GameEvents::TriggerMenuUpdate();
+
+            Vector2 pacSpawn = Mapa::GetPlayerSpawn();
+            RenderManager::CameraFollow({pacSpawn.x, 0, pacSpawn.y}, 3);
         }else{
             SetState(GameInProgress);
         }
     }
 
-
+    double restartTimer = 0;
+    void GameInProgressStateInit(){
+        restartTimer = -1;
+    }
     void GameInProgressStateUpdate(){
         GameEvents::TriggerUpdate();
         std::ostringstream scoreString;
-        scoreString << "Score:" << (int)stateTimer;
+        scoreString << "Score:" << pacman->GetScore();
         UI::DrawTextCentered(scoreString.str(), 0.5, 0.05, 5, 0.5, RAYWHITE);
+
+        if(!pacman->IsAlive()){
+            if(restartTimer < 0)
+                restartTimer = 0;
+
+            restartTimer += GetFrameTime();
+
+            if(restartTimer >= 3){
+                GameEvents::TriggerRestart();
+                SetState(GameStart);
+            }
+                
+            
+        }
     }
 
 
@@ -117,6 +142,7 @@ namespace Game{
             break;
 
             case GameInProgress:
+                GameInProgressStateInit();
                 stateUpdateFunction = GameInProgressStateUpdate;
             break;
 

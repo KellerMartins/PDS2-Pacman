@@ -22,11 +22,7 @@ int main(){
         if(IsKeyPressed(KEY_R))
             RenderManager::ReloadShaders();
         #endif
-
-        if(IsKeyDown(KEY_SPACE)){
-            Game::SetState(Game::GameStart);
-        }
-
+        
         Game::Update();
         RenderManager::Render();
     }

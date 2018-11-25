@@ -47,6 +47,7 @@ class Mapa : public GameEvents{
 
 		virtual void OnUpdate() override;
 		virtual void OnMenuUpdate() override;
+		virtual void OnRestart() override;
 
 		static void ObtemDirecao(unsigned int startX, unsigned int startY, unsigned int goalX, unsigned int goalY, int &stepX, int &stepY);
 
