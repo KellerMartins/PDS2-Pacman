@@ -1,7 +1,6 @@
 #ifndef BLINKY_H
 #define BLINKY_H
-#include "enemy.h"
-#include "pacman.h"
+#include "../enemy.h"
 
 class Blinky : public Enemy{
 public:

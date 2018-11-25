@@ -1,5 +1,4 @@
 #include "pinky.h"
-#include "enemy.h"
 
 Pinky::Pinky(int x, int y):
     Enemy(x,y, PINK){}

@@ -1,6 +1,7 @@
 #include "mapa.h"
+
 #include <climits>
-#include "utils.h"
+#include "../utils.h"
 #include "enemy.h"
 
 std::string modeloElemento[] = {"",

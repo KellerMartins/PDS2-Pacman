@@ -1,18 +1,17 @@
 #ifndef Enemy_H
 #define Enemy_H
 
-#include <vector>
 #include <raylib.h>
+#include <vector>
+#include <list>
+#include <stdexcept>
+#include <cmath>
+
 #include "gameEvents.h"
 #include "mapa.h"
-#include "utils.h"
 #include "pacman.h"
-#include <ctime>
-#include <cmath>
-#include <cstdlib>
-#include <list>
-#include <algorithm>
-#include <stdexcept>
+#include "../utils.h"
+
 
 class Enemy : public GameEvents {
 protected:

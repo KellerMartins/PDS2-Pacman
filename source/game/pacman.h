@@ -2,14 +2,13 @@
 #ifndef PACMAN_H
 #define PACMAN_H
 
-#include <time.h>
 #include <vector>
 #include <string>
 #include <cmath>
 
-#include "graphics/animation.h"
-#include "gameEvents.h"
+#include "../graphics/animation.h"
 #include "enemy.h"
+#include "gameEvents.h"
 #include "mapa.h"
 
 class Pacman : public GameEvents {

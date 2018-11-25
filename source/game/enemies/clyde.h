@@ -1,6 +1,6 @@
 #ifndef CLYDE_H
 #define CLYDE_H
-#include "enemy.h"
+#include "../enemy.h"
 
 class Clyde : public Enemy{
 public:

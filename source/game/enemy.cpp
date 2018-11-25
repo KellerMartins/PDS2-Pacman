@@ -1,7 +1,4 @@
 #include "enemy.h"
-#include "utils.h"
-#include <chrono>
-using namespace std;
 
 #define MAPA_VALIDO 0
 #define MAPA_INVALIDO 1
@@ -10,7 +7,7 @@ using namespace std;
 #define ITEM_FRUTA 4
 #define VALOR_FRUTA 50
 
-std::vector<Enemy*> Enemy::enemies(0);
+std::vector<Enemy*> Enemy::enemies;
 
 Enemy::Enemy(int x, int y, Color color){
 	this->x = x;
@@ -105,7 +102,7 @@ void Enemy::OnUpdate(){
 
 
 	//DEBUG: Desenho do caminho e da posição dos fantasmas
-	int ix = this->x;
+	/*int ix = this->x;
 	int iy = this->y;
 	int dx = 0;
 	int dy = 0;
@@ -115,7 +112,7 @@ void Enemy::OnUpdate(){
 		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, this->color);
 		ix+=dx;
 		iy+=dy;
-	}while(dx != 0 || dy != 0);
+	}while(dx != 0 || dy != 0);*/
 
 	RenderManager::DrawDebugCube((Vector3){(float)visualX, 0.5, (float)visualY}, (Vector3){1,1,1}, this->color);
 }

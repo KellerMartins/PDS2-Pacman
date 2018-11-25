@@ -1,6 +1,6 @@
 #include "pacman.h"
 
-#include "utils.h"
+#include "../utils.h"
 
 using namespace std;
 #define VALOR_FRUTA 50
@@ -152,9 +152,8 @@ void Pacman::OnUpdate(){
 	}
 	this->modelo.position = (Vector3){(float)x, 0, (float)y};
 
-	//RenderManager::CameraFollow(this->modelo.position);
+	RenderManager::CameraFollow(this->modelo.position);
 
-	//RenderManager::DrawDebugCube((Vector3){(float)x, 0.5, (float)y}, (Vector3){1,1,1}, WHITE);
 	x_ToGhost = round(this->x);
 	y_ToGhost = round(this->y);
 	dirx_ToGhost = this->direcao_x;

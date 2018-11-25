@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "graphics/object3D.h"
-#include "graphics/rendering.h"
+#include "../graphics/object3D.h"
+#include "../graphics/rendering.h"
 #include "gameEvents.h"
 
 #define ALTURA 27
