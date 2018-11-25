@@ -65,36 +65,57 @@ void Enemy::OnUpdate(){
 	if(this->timerScatter <= 0){
 		this->isScatter = false;
 	}
+
+	int newGoalX,newGoalY;
+	this->set_goal(newGoalX, newGoalY, pac_x,pac_y, dirX, dirY);
+	if(newGoalX >= 0 && newGoalX < LARGURA && 
+	   newGoalY >= 0 && newGoalY < ALTURA && 
+	   Mapa::GetElementoMapa(newGoalX, newGoalY) != ElementoMapa::Parede){
+		goalX = newGoalX;
+		goalY = newGoalY;
+	}
+
+	timerMovimento += GetFrameTime()*velocidade;
+	if(abs(x-Modulus(x+direcao_x, LARGURA)) != LARGURA-1){
+		visualX = Lerp(x, x+direcao_x, timerMovimento);
+	}else{
+		visualX = x+direcao_x;
+		timerMovimento = 1;
+	}
+
+	if(abs(y-Modulus(y+direcao_y, ALTURA)) != ALTURA-1){
+		visualY = Lerp(y, y+direcao_y, timerMovimento);
+	}else{
+		visualY = y+direcao_y;
+		timerMovimento = 1;
+	}
+
+	if(timerMovimento >= 1){
+		timerMovimento = 0;
+		x = Modulus(x+direcao_x, LARGURA);
+		y = Modulus(y+direcao_y, ALTURA);
+		visualX = x;
+		visualY = y;
+		Mapa::ObtemDirecao(x, y, this->goalX,this->goalY, this->direcao_x, this->direcao_y);
+
+		if(!this->vivo && x == this->goalX && y == this->goalY){
+			this->vivo = true;
+		}
+	}
+
+
+	//DEBUG: Desenho do caminho e da posição dos fantasmas
 	int ix = this->x;
 	int iy = this->y;
 	int dx = 0;
 	int dy = 0;
-	//set_goal(int this->goalX, int this->goalY);
-	
+
 	do{
 		Mapa::ObtemDirecao(ix, iy, this->goalX,this->goalY, dx, dy);
 		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, this->color);
 		ix+=dx;
 		iy+=dy;
 	}while(dx != 0 || dy != 0);
-
-	this->set_goal(this->goalX, this->goalY, pac_x,pac_y, dirX, dirY);
-	timerMovimento += GetFrameTime()*velocidade;
-	visualX = Lerp(x, x+direcao_x, timerMovimento);
-	visualY = Lerp(y, y+direcao_y, timerMovimento);
-	if(timerMovimento > 1){
-		timerMovimento = 0;
-		x += direcao_x;
-		y += direcao_y;
-		visualX = x;
-		visualY = y;
-		Mapa::ObtemDirecao(x, y, this->goalX,this->goalY, this->direcao_x, this->direcao_y);
-
-		//DEBUG: move um ponto de destino global toda vez que um objeto o alcança
-		if(!this->vivo && x == this->goalX && y == this->goalY){
-			this->vivo = true;
-		}
-	}
 
 	RenderManager::DrawDebugCube((Vector3){(float)visualX, 0.5, (float)visualY}, (Vector3){1,1,1}, this->color);
 }

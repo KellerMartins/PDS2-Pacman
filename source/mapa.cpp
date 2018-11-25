@@ -85,23 +85,50 @@ void Mapa::GerarCaminho(){
 					_caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
+				}else if(x == LARGURA){
+					int iv = 0+(y*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
 				}
+
 				if(x-1 >= 0 && _mapa[x-1][y]!=Parede){
 					int iv = (x-1)+(y*LARGURA);
 					_caminhos[i][iv] = 1;
 					_caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
+				}else if(x == 0){
+					int iv = (LARGURA-1)+(y*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
 				}
+
 				if(y+1 < ALTURA && _mapa[x][y+1]!=Parede){
 					int iv = x +((y+1)*LARGURA);
 					_caminhos[i][iv] = 1;
 					_caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
+				}else if(y == ALTURA){
+					int iv = x+(0*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
 				}
+
 				if(y-1 >= 0 && _mapa[x][y-1]!=Parede){
 					int iv = x +((y-1)*LARGURA);
+					_caminhos[i][iv] = 1;
+					_caminhos[iv][i] = 1;
+					_proximo[i][iv] = iv;
+					_proximo[iv][i] = i;
+				}else if(y == 0){
+					int iv = x+((ALTURA-1)*LARGURA);
 					_caminhos[i][iv] = 1;
 					_caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
