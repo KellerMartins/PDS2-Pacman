@@ -36,23 +36,23 @@ namespace Game{
 
         Vector2 enemyPos;
         if(Mapa::GetEnemySpawn(0, enemyPos))
-            Enemy::adiciona_inimigo(new Blinky(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Blinky(enemyPos.x,enemyPos.y));
 
         if(Mapa::GetEnemySpawn(1, enemyPos))
-            Enemy::adiciona_inimigo(new Pinky(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Pinky(enemyPos.x,enemyPos.y));
 
         if(Mapa::GetEnemySpawn(2, enemyPos))
-            Enemy::adiciona_inimigo(new Inky(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Inky(enemyPos.x,enemyPos.y));
 
         if(Mapa::GetEnemySpawn(3, enemyPos))
-            Enemy::adiciona_inimigo(new Clyde(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Clyde(enemyPos.x,enemyPos.y));
 
         SetState(Menu);
     }
 
     void Quit(){
         delete pacman;
-        Enemy::remove_inimigos();
+        Enemy::RemoveInimigos();
         RenderManager::Quit();
     }
 

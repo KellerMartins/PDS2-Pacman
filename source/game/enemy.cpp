@@ -7,155 +7,155 @@
 #define ITEM_FRUTA 4
 #define VALOR_FRUTA 50
 
-std::vector<Enemy*> Enemy::enemies;
+std::vector<Enemy*> Enemy::_enemies;
 
-Enemy::Enemy(int x, int y, Color color) : model(DEFAULT_MODEL_PATH,color){
-	this->spawnX = x;
-	this->spawnY = y;
-	this->x = x;
-	this->y = y;
-	this->model.position = {(float)x, 0, (float)y};
-	this->direcao_y = 0;
-	this->direcao_x = 0;
+Enemy::Enemy(int x, int y, Color color) : _model(DEFAULT_MODEL_PATH,color){
+	_spawnX = x;
+	_spawnY = y;
+	_x = x;
+	_y = y;
+	_model.position = {(float)x, 0, (float)y};
+	_direcaoY = 0;
+	_direcaoX = 0;
 
-	this->scared = false;
-	this->scatter = false;
-	this->alive = true;
+	_scared = false;
+	_scatter = false;
+	_alive = true;
 
-	this->color = color;
-	this->velocidade = 2.5;
+	_color = color;
+	_velocidade = 2.5;
 
-	this->timerMovimento = 0.0;
-	this->timerScatter = 0.0;
+	_timerMovimento = 0.0;
+	_timerScatter = 0.0;
 	
-	this->goalX = 1.0;
-	this->goalY = 1.0;
+	_goalX = 1.0;
+	_goalY = 1.0;
 }
 
-void Enemy::adiciona_inimigo(Enemy* enemy){
-	enemies.push_back(enemy);
+void Enemy::AdicionaInimigo(Enemy* enemy){
+	_enemies.push_back(enemy);
 }
-void Enemy::remove_inimigos(){
-	enemies.clear();
+void Enemy::RemoveInimigos(){
+	_enemies.clear();
 	
 }
 
-std::vector<Enemy*> &Enemy::get_enemies()
+std::vector<Enemy*> &Enemy::GetEnemies()
 {
-	return enemies;
+	return _enemies;
 }
 
-void Enemy::getScared(){
-	if(alive){
-		scared = true;
-		model.SetColor(PURPLE);
+void Enemy::GetScared(){
+	if(_alive){
+		_scared = true;
+		_model.SetColor(PURPLE);
 	}
 }
 
-void Enemy::morrer(){
-	alive = false;
-	scared = false;
-	model.SetColor(WHITE);
+void Enemy::Morrer(){
+	_alive = false;
+	_scared = false;
+	_model.SetColor(WHITE);
 }
 
 void Enemy::OnUpdate(){
 
-	int pac_x = Pacman::get_x();
-	int pac_y = Pacman::get_y();
-	int dirX =  Pacman::get_dirx();
-	int dirY =  Pacman::get_diry();
+	int pac_x = Pacman::GetX();
+	int pac_y = Pacman::GetY();
+	int dirX =  Pacman::GetDirX();
+	int dirY =  Pacman::GetDirY();
 
-	timerScatter += GetFrameTime();
-	if(this->timerScatter > SCATTER_TIME) {
-		this->scatter = true;
+	_timerScatter += GetFrameTime();
+	if(_timerScatter > SCATTER_TIME) {
+		_scatter = true;
 	}
-	if(this->timerScatter <= 0){
-		this->scatter = false;
+	if(_timerScatter <= 0){
+		_scatter = false;
 	}
 
 	int newGoalX,newGoalY;
-	this->set_goal(newGoalX, newGoalY, pac_x,pac_y, dirX, dirY);
+	SetGoal(newGoalX, newGoalY, pac_x,pac_y, dirX, dirY);
 	if(newGoalX >= 0 && newGoalX < LARGURA && 
 	   newGoalY >= 0 && newGoalY < ALTURA && 
 	   Mapa::GetElementoMapa(newGoalX, newGoalY) != ElementoMapa::Parede){
-		goalX = newGoalX;
-		goalY = newGoalY;
+		_goalX = newGoalX;
+		_goalY = newGoalY;
 	}
 
-	timerMovimento += GetFrameTime()*velocidade;
-	if(abs(x-Modulus(x+direcao_x, LARGURA)) != LARGURA-1){
-		model.position.x = Lerp(x, x+direcao_x, timerMovimento);
+	_timerMovimento += GetFrameTime()*_velocidade;
+	if(abs(_x-Modulus(_x+_direcaoX, LARGURA)) != LARGURA-1){
+		_model.position.x = Lerp(_x, _x+_direcaoX, _timerMovimento);
 	}else{
-		model.position.x = x+direcao_x;
-		timerMovimento = 1;
+		_model.position.x = _x+_direcaoX;
+		_timerMovimento = 1;
 	}
 
-	if(abs(y-Modulus(y+direcao_y, ALTURA)) != ALTURA-1){
-		model.position.z = Lerp(y, y+direcao_y, timerMovimento);
+	if(abs(_y-Modulus(_y+_direcaoY, ALTURA)) != ALTURA-1){
+		_model.position.z = Lerp(_y, _y+_direcaoY, _timerMovimento);
 	}else{
-		model.position.z = y+direcao_y;
-		timerMovimento = 1;
+		_model.position.z = _y+_direcaoY;
+		_timerMovimento = 1;
 	}
 
-	if(timerMovimento >= 1){
-		timerMovimento = 0;
-		x = Modulus(x+direcao_x, LARGURA);
-		y = Modulus(y+direcao_y, ALTURA);
-		model.position.x = x;
-		model.position.z = y;
-		Mapa::ObtemDirecao(x, y, this->goalX,this->goalY, this->direcao_x, this->direcao_y);
+	if(_timerMovimento >= 1){
+		_timerMovimento = 0;
+		_x = Modulus(_x+_direcaoX, LARGURA);
+		_y = Modulus(_y+_direcaoY, ALTURA);
+		_model.position.x = _x;
+		_model.position.z = _y;
+		Mapa::ObtemDirecao(_x, _y, _goalX,_goalY, _direcaoX, _direcaoY);
 
-		if(!this->alive && x == this->goalX && y == this->goalY){
-			this->alive = true;
-			model.SetColor(color);
+		if(!_alive && _x == _goalX && _y == _goalY){
+			_alive = true;
+			_model.SetColor(_color);
 		}
 	}
 
 
 	//DEBUG: Desenho do caminho e da posição dos fantasmas
-	/*int ix = this->x;
-	int iy = this->y;
+	/*int ix = _x;
+	int iy = _y;
 	int dx = 0;
 	int dy = 0;
 
 	do{
-		Mapa::ObtemDirecao(ix, iy, this->goalX,this->goalY, dx, dy);
-		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, this->color);
+		Mapa::ObtemDirecao(ix, iy, _goalX,_goalY, dx, dy);
+		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, _color);
 		ix+=dx;
 		iy+=dy;
 	}while(dx != 0 || dy != 0);
 
-	RenderManager::DrawDebugCube((Vector3){(float)model.position.x, 0.5, (float)model.position.z}, (Vector3){1,1,1}, this->color);
+	RenderManager::DrawDebugCube((Vector3){(float)model.position.x, 0.5, (float)model.position.z}, (Vector3){1,1,1}, _color);
 	*/
 }
 
 void Enemy::OnRestart(){
-	model.position = {(float)spawnX, 0, (float)spawnY};
-	direcao_x = 0;
-	direcao_y = 0;
-	x = spawnX;
-	y = spawnY;
-	scatter = false;
-	scared = false;
-	alive = true;
+	_model.position = {(float)_spawnX, 0, (float)_spawnY};
+	_direcaoX = 0;
+	_direcaoY = 0;
+	_x = _spawnX;
+	_y = _spawnY;
+	_scatter = false;
+	_scared = false;
+	_alive = true;
 }
 
-bool Enemy::isScared(){
-	return this->scared;
+bool Enemy::IsScared(){
+	return _scared;
 }
 
-Color Enemy::get_color(){
-	return scared? (Color)PURPLE : (alive? color : (Color)WHITE);
+Color Enemy::GetColor(){
+	return _scared? (Color)PURPLE : (_alive? _color : (Color)WHITE);
 }
 
-float Enemy::get_x(){
-	return this->model.position.x;
+float Enemy::GetX(){
+	return _model.position.x;
 }
 
-float Enemy::get_y(){
-	return this->model.position.z;
+float Enemy::GetY(){
+	return _model.position.z;
 }
 
-bool Enemy::get_alive(){
-	return this->alive;
+bool Enemy::GetAlive(){
+	return _alive;
 }
