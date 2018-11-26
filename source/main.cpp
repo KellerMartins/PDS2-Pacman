@@ -51,27 +51,29 @@ bool OpenConfigWindow(){
         Rectangle play = { 430, 10, 135, 90 };
         Rectangle fullscr = { 175, 75, 240, 27 };
         Rectangle previousRes = { 175, 5, 20, 30 };
-        Rectangle nextRes = { 400, 5, 20, 30 };
+        Rectangle nextRes = { 405, 5, 20, 30 };
         Rectangle previousQual = { 175, 40, 20, 30 };
-        Rectangle nextQual = { 400, 40, 20, 30 };
+        Rectangle nextQual = { 405, 40, 20, 30 };
+
+        bool clicked = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
         //Checa se clicou em um deles ou apertou a tecla correspondente ao comando
-        if((CheckCollisionPointRec(GetMousePosition(), previousRes) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+        if((CheckCollisionPointRec(GetMousePosition(), previousRes) && clicked) ||  IsKeyReleased(KEY_LEFT))
             resolution -= resolution-1>=0? 1:0;
         
-        if((CheckCollisionPointRec(GetMousePosition(), nextRes) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+        if((CheckCollisionPointRec(GetMousePosition(), nextRes) && clicked) ||  IsKeyReleased(KEY_RIGHT))
             resolution += resolution+1<=3? 1:0;
 
-        if((CheckCollisionPointRec(GetMousePosition(), previousQual) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+        if(CheckCollisionPointRec(GetMousePosition(), previousQual) && clicked)
             quality = (RenderManager::BlurQuality) (quality-1>=0? quality-1:quality);
         
-        if((CheckCollisionPointRec(GetMousePosition(), nextQual) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+        if(CheckCollisionPointRec(GetMousePosition(), nextQual) && clicked)
             quality = (RenderManager::BlurQuality) (quality+1<=2? quality+1:quality);
         
-        if(CheckCollisionPointRec(GetMousePosition(), fullscr) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        if(CheckCollisionPointRec(GetMousePosition(), fullscr) && clicked)
             fullscreen = !fullscreen;
         
-        if((CheckCollisionPointRec(GetMousePosition(), play) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) ||  IsKeyReleased(KEY_ENTER))
+        if((CheckCollisionPointRec(GetMousePosition(), play) && clicked) ||  IsKeyReleased(KEY_ENTER))
             break; //Termina o loop da tela de configuraçoes
         
         //Define a resolução a ser usada
@@ -118,11 +120,11 @@ bool OpenConfigWindow(){
         
         //Renderiza as setas de resolução
         DrawTextEx(font,"<",(Vector2){175, 5}, 33, 2, resolution>0? settingsCol : (Color)DARKGRAY); 
-        DrawTextEx(font,">",(Vector2){398, 5}, 33, 2, resolution<3? settingsCol : (Color)DARKGRAY);
+        DrawTextEx(font,">",(Vector2){403, 5}, 33, 2, resolution<3? settingsCol : (Color)DARKGRAY);
 
         //Renderiza as setas de qualidade
         DrawTextEx(font,"<",(Vector2){175, 40}, 33, 2, quality>0? settingsCol : (Color)DARKGRAY); 
-        DrawTextEx(font,">",(Vector2){398, 40}, 33, 2, quality<2? settingsCol : (Color)DARKGRAY);
+        DrawTextEx(font,">",(Vector2){403, 40}, 33, 2, quality<2? settingsCol : (Color)DARKGRAY);
            
         EndDrawing();
     }
