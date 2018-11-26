@@ -26,6 +26,8 @@ private:
 	static int _diryToGhost;
 	float _velocidade;
 	float _timerAnimacao;
+	float _timerScared;
+	int _scaredTime;
 	Animation _andando;
 	Animation _parado;
 	Animation _morrendo;

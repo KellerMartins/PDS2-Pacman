@@ -10,7 +10,7 @@ void Clyde::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dir
                 goalX = LARGURA - 2;
                 goalY = ALTURA - 2;
                 if(_timerScatter > 0){
-                    _timerScatter -= 4*GetFrameTime();
+                    _timerScatter -= 5*GetFrameTime();
                     
                 }
             }//Se a distancia entre o Clyde e o pacman for menor que 8 ele volta pro cantinho dele

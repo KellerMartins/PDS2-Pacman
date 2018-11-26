@@ -11,7 +11,7 @@ void Blinky::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int di
                 goalX = 1;
                 goalY = 1;
                 if(_timerScatter > 0){
-                    _timerScatter -= 4*GetFrameTime();
+                    _timerScatter -= 5*GetFrameTime();
                     
                 }
             }else{

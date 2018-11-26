@@ -24,7 +24,7 @@ protected:
 	int _direcaoX;
 
 	bool _scatter;
-	bool _scared;
+	static bool _scared;
 	bool _alive;
 	static bool _isOver;
 	
@@ -46,8 +46,8 @@ public:
 	static void IsOver(bool state);
 	static std::vector<Enemy*> &GetEnemies();
 	void Morrer();
-	void GetScared();
-	bool IsScared();
+	static void GetScared(bool state);
+	static bool IsScared();
 	Color GetColor();
 	float GetX();
 	float GetY();

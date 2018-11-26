@@ -10,7 +10,7 @@ void Inky::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dirY
                 goalX = 1;
                 goalY = ALTURA - 2;
                 if(_timerScatter > 0){
-                    _timerScatter -= 4*GetFrameTime();
+                    _timerScatter -= 5*GetFrameTime();
                 }
             }
             else{

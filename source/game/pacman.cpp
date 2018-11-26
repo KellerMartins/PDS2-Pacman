@@ -27,6 +27,8 @@ Pacman::Pacman(int x, int y) : _modelo("assets/models/pacman/idle/player_idle_0.
 	_vidas = 3;
 	_velocidade = 2.5;
 	_timerAnimacao = 0.0;
+	_timerScared = 0.0;
+	_scaredTime = 6;
 }
 
 bool Pacman::VerificaPosicao(){
@@ -50,7 +52,7 @@ bool Pacman::VerificaPosicao(){
 				return 0;				
 			}
 		}
-	}
+	}	
 	
 	if(Mapa::GetElementoMapa(ix,iy) == ElementoMapa::Ponto) {
 		_pontuacao++;
@@ -60,7 +62,9 @@ bool Pacman::VerificaPosicao(){
 	
 	if(Mapa::GetElementoMapa(ix,iy) == ElementoMapa::Especial){
 		for (unsigned int i = 0; i < enemies.size(); ++i){
-			enemies[i]->GetScared();
+			if(enemies[i]->GetAlive()){
+				enemies[i]->GetScared(true);
+			}
 		}
 		_pontuacao+= VALOR_FRUTA;
 		//Altera o valor no mapa para que o ponto desapareça
@@ -132,6 +136,17 @@ void Pacman::Resetar(){
 void Pacman::OnUpdate(){
 	
 	_timerAnimacao += GetFrameTime() * 9 /*Frames por segundo*/;
+
+	
+	if(Enemy::IsScared()){
+		 if(_timerScared < _scaredTime){
+		_timerScared += GetFrameTime();
+		}
+		else{
+			_timerScared = 0;
+			Enemy::GetScared(false);
+		}
+	}
 	
 	if(_vivo){
 		CalculaDirecao();
