@@ -1,8 +1,8 @@
 #include <raylib.h>
 #include "game/game.h"
 
-int width = 1280;
-int height = 720;
+int width = 800;
+int height = 450;
 bool fullscreen = false;
 RenderManager::BlurQuality quality = RenderManager::Medium;
 
@@ -22,7 +22,7 @@ int main(){
         if(IsKeyPressed(KEY_R))
             RenderManager::ReloadShaders();
         #endif
-        
+
         Game::Update();
         RenderManager::Render();
     }

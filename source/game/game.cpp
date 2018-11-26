@@ -101,6 +101,8 @@ namespace Game{
         std::ostringstream scoreString;
         scoreString << "Score:" << pacman->GetScore();
         UI::DrawTextCentered(scoreString.str(), 0.5, 0.05, 5, 0.5, RAYWHITE);
+        for(unsigned i=0; i<pacman->GetLifes(); i++)
+            UI::DrawImage("assets/interface/pacman_icon.png", 0.05 + i*0.05, 0.9, 0.1, 0.1);
 
         if(!pacman->IsAlive()){
             if(restartTimer < 0)
@@ -112,8 +114,6 @@ namespace Game{
                 GameEvents::TriggerRestart();
                 SetState(GameStart);
             }
-                
-            
         }
     }
 
