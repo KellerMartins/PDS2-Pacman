@@ -20,6 +20,7 @@ namespace Game{
     Pacman* pacman = nullptr;
 
     double stateTimer = 0;
+    double introFadeTimer = 0;
 
     bool hasLoaded = false;
     State currentState;
@@ -56,10 +57,6 @@ namespace Game{
         RenderManager::Quit();
     }
 
-    void ShowIntro(){
-
-    }
-
     void MenuStateInit(){
         RenderManager::camera.position = { LARGURA/2, 32.0f, ALTURA/1.9 };
         RenderManager::camera.target = { LARGURA/2, 0.0f, ALTURA/2 };
@@ -69,6 +66,13 @@ namespace Game{
         GameEvents::TriggerMenuUpdate();
         UI::DrawImage("assets/interface/title.png",0.5,0.4,0.75,0.75);
         UI::DrawTextCentered("Press space", 0.5, 0.8, 7, 0.0, { 246, 196, 2, 255 });
+
+        #ifdef NDEBUG
+        if(1.0-introFadeTimer > 0){
+            UI::DrawRect(0,0,1,1,Lerp(RAYWHITE, {0, 0, 0, 0}, introFadeTimer));
+            introFadeTimer+=2*Clamp(GetFrameTime(),0,0.016);
+        }
+        #endif
 
         if(IsKeyDown(KEY_SPACE)){
             pacman->Resetar();

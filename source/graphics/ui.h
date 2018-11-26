@@ -12,6 +12,7 @@ namespace UI{
     void DrawImage(std::string imagePath, float X, float Y, float Width, float Height);
     void DrawText(std::string Text, float X, float Y, float Size, float Spacing, Color ColorTint);
     void DrawTextCentered(std::string Text, float X, float Y, float Size, float Spacing, Color ColorTint);
+    void DrawRect(float X, float Y, float Width, float Height, Color ColorTint);
 
     void SetFont(std::string fontPath);
     void Render();

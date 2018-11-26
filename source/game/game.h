@@ -10,6 +10,8 @@ namespace Game{
     void Init(int screenWidth, int screenHeight, bool fullscreen, RenderManager::BlurQuality quality);
     void Quit();
 
+    bool ShowIntro();
+
     void SetState(State state);
     void Update();
 }
