@@ -15,123 +15,162 @@ Mapa& Mapa::GetMapaGlobal(){
 	return mapaGlobal;
 }
 
-Mapa::Mapa(){}
+Mapa::Mapa(): _pontosRestantes(0){}
 
-Mapa::~Mapa()
-{
+Mapa::~Mapa(){
 	DesregistraMapaRenderizavel();
 }
 
-void Mapa::CarregaArquivo(std::string arq)
-{
+void Mapa::CarregaArquivo(std::string arq){
+	Mapa &mapa = GetMapaGlobal();
+
 	std::ifstream arquivo(arq);
 
-	for(int y = 0; y < ALTURA; y++)
-	{
-		for(int x = 0; x < LARGURA; x++)
-		{
+	for(int y = 0; y < ALTURA; y++){
+		for(int x = 0; x < LARGURA; x++){
 			int elemento;
 			arquivo >> elemento;
-			if(!arquivo.fail())
-			{
+			if(!arquivo.fail()){
 				if(elemento <= MAX_INDICE_ELEMENTO_MAPA){
-					_mapa[x][y] = (ElementoMapa) elemento;
-				}else{
+					mapa._mapa[x][y] = (ElementoMapa) elemento;
+					mapa._original[x][y] = (ElementoMapa) elemento;
+
+					if(elemento == Ponto || elemento == Especial){
+						mapa._pontosRestantes++;
+					}
+				}
+				else{
 					if(elemento == INDICE_PACMAN){
-						_playerSpawn = (Vector2){(float)x, (float)y};
+						mapa._playerSpawn = (Vector2){(float)x, (float)y};
 					}
 					else if(elemento >= INDICE_FANTASMAS){
-						_enemySpawn[elemento - INDICE_FANTASMAS] = (Vector2){(float)x, (float)y};
+						mapa._enemySpawn[elemento - INDICE_FANTASMAS] = (Vector2){(float)x, (float)y};
 					}
 				}
 			}
-			else
-			{
+			else{
 				throw std::invalid_argument("Mapa " + arq +" contem valor invalido!");
 			}
 		}
 	}
-	DesregistraMapaRenderizavel();
-	RegistraMapaRenderizavel();
-	GerarCaminho();
+	mapa.DesregistraMapaRenderizavel();
+	mapa.RegistraMapaRenderizavel();
+	mapa.GerarCaminho();
+}
+
+void Mapa::Recarrega(){
+	Mapa &mapa = GetMapaGlobal();
+	for(int y = 0; y < ALTURA; y++){
+		for(int x = 0; x < LARGURA; x++){
+			ElementoMapa elem = mapa._original[x][y];
+			mapa._mapa[x][y] = elem;
+
+			if(elem == Ponto || elem == Especial){
+				mapa._pontosRestantes++;
+				Object3D* ponto = new Object3D(modeloElemento[elem], BLUE);
+				ponto->position.x = x;
+				ponto->position.z = y;
+				mapa._objetosMapa.push_back(ponto);
+			}
+		}
+	}
+}
+
+void Mapa::RegistraMapaRenderizavel(){
+	for(int y = 0; y < ALTURA; y++){
+		for(int x = 0; x < LARGURA; x++){
+			int indiceElem = (int)(this->_mapa[x][y]);
+			if(indiceElem < (int)(sizeof(modeloElemento)/sizeof(modeloElemento[0])) && modeloElemento[indiceElem] != ""){
+				Object3D* parede = new Object3D(modeloElemento[indiceElem], BLUE);
+				parede->position.x = x;
+				parede->position.z = y;
+				_objetosMapa.push_back(parede);
+			}
+		}
+	}
+}
+
+void Mapa::DesregistraMapaRenderizavel(){
+	for(Object3D* o : _objetosMapa){
+		delete o;
+	}
+	_objetosMapa.clear();
 }
 
 void Mapa::GerarCaminho(){
 	//Criando a matriz geradora de caminhos
-	int** _caminhos = new int*[LARGURA*ALTURA];
+	int** caminhos = new int*[LARGURA*ALTURA];
 	for(int i = 0; i < LARGURA*ALTURA; i++){
-		_caminhos[i] = new int[LARGURA*ALTURA];
+		caminhos[i] = new int[LARGURA*ALTURA];
 	}
 	//Inicializando
 	for(int i = 0; i < LARGURA*ALTURA; i++){
 		for(int j = 0; j < LARGURA*ALTURA; j++){
-			_caminhos[i][j] = INT_MAX/2;
+			caminhos[i][j] = INT_MAX/2;
 			_proximo[i][j] = -1;
 		}
 	}
 
-	for(int y = 0; y < ALTURA; y++)
-	{
-		for(int x = 0; x < LARGURA; x++)
-		{
+	for(int y = 0; y < ALTURA; y++){
+		for(int x = 0; x < LARGURA; x++){
 			int i = x+(y*LARGURA);
-			_caminhos[i][i] = 0;
+			caminhos[i][i] = 0;
 			_proximo[i][i] = i;
 
 			//Define a distancia entre vizinhos e o atual como 1
 			if(_mapa[x][y] != Parede){
 				if(x+1 < LARGURA && _mapa[x+1][y]!=Parede){
 					int iv = (x+1)+(y*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}else if(x == LARGURA){
 					int iv = 0+(y*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}
 
 				if(x-1 >= 0 && _mapa[x-1][y]!=Parede){
 					int iv = (x-1)+(y*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}else if(x == 0){
 					int iv = (LARGURA-1)+(y*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}
 
 				if(y+1 < ALTURA && _mapa[x][y+1]!=Parede){
 					int iv = x +((y+1)*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}else if(y == ALTURA){
 					int iv = x+(0*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}
 
 				if(y-1 >= 0 && _mapa[x][y-1]!=Parede){
 					int iv = x +((y-1)*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}else if(y == 0){
 					int iv = x+((ALTURA-1)*LARGURA);
-					_caminhos[i][iv] = 1;
-					_caminhos[iv][i] = 1;
+					caminhos[i][iv] = 1;
+					caminhos[iv][i] = 1;
 					_proximo[i][iv] = iv;
 					_proximo[iv][i] = i;
 				}
@@ -142,13 +181,18 @@ void Mapa::GerarCaminho(){
 	for(int k = 0; k < LARGURA*ALTURA; k++){
 		for(int i = 0; i < LARGURA*ALTURA; i++){
 			for(int j = 0; j < LARGURA*ALTURA; j++){
-				if(_caminhos[i][j] > _caminhos[i][k] + _caminhos[k][j]){
-					_caminhos[i][j] = _caminhos[i][k] + _caminhos[k][j];
+				if(caminhos[i][j] > caminhos[i][k] + caminhos[k][j]){
+					caminhos[i][j] = caminhos[i][k] + caminhos[k][j];
 					_proximo[i][j] = _proximo[i][k];
 				}
 			}
 		}
 	}
+
+	for(int i = 0; i < LARGURA*ALTURA; i++){
+		free(caminhos[i]);
+	}
+	free(caminhos);
 }
 
 void Mapa::ObtemDirecao(unsigned int startX, unsigned int startY, unsigned int goalX, unsigned int goalY, int &stepX, int &stepY){
@@ -167,63 +211,37 @@ void Mapa::ObtemDirecao(unsigned int startX, unsigned int startY, unsigned int g
 
 		stepX -= startX;
 		stepY -= startY;
-	}
-	else{
+	}else{
 		stepX = 0;
 		stepY = 0;
 	}
 }
 
-ElementoMapa Mapa::GetElementoMapa(unsigned int x, unsigned int y)
-{
-	if(x >= LARGURA || y >=ALTURA) return ElementoMapa::Vazio;
+unsigned Mapa::GetPontosRestantes(){
+	return GetMapaGlobal()._pontosRestantes;
+}
 
+ElementoMapa Mapa::GetElementoMapa(unsigned int x, unsigned int y){
+	if(x >= LARGURA || y >=ALTURA) return ElementoMapa::Vazio;
 	return GetMapaGlobal()._mapa[x][y];
 }
 
-void Mapa::RemoveElementoMapa(unsigned int x, unsigned int y)
-{
+void Mapa::RemoveElementoMapa(unsigned int x, unsigned int y){
 	if(x >= LARGURA || y >=ALTURA) return ;
 
 	Mapa& mapa = GetMapaGlobal();
+	if(mapa._mapa[x][y] == Ponto || mapa._mapa[x][y] == Especial)
+		mapa._pontosRestantes--;
+
 	mapa._mapa[x][y] = ElementoMapa::Vazio;
-	for(unsigned int i=0; i < mapa._objetosMapa.size(); i++)
-	{
+	for(unsigned int i=0; i < mapa._objetosMapa.size(); i++){
 		Object3D* objMapa = mapa._objetosMapa.at(i);
-		if(objMapa->position.x == x && objMapa->position.z == y)
-		{
+		if(objMapa->position.x == x && objMapa->position.z == y){
 			delete objMapa;
 			mapa._objetosMapa.erase(mapa._objetosMapa.begin()+i);
 			break;
 		}	
 	}
-}
-
-void Mapa::RegistraMapaRenderizavel()
-{
-	for(int y = 0; y < ALTURA; y++)
-	{
-		for(int x = 0; x < LARGURA; x++)
-		{
-			int indiceElem = (int)(this->_mapa[x][y]);
-			if(indiceElem < (int)(sizeof(modeloElemento)/sizeof(modeloElemento[0])) && modeloElemento[indiceElem] != "")
-			{
-				Object3D* parede = new Object3D(modeloElemento[indiceElem], BLUE);
-				parede->position.x = x;
-				parede->position.z = y;
-				_objetosMapa.push_back(parede);
-			}
-		}
-	}
-}
-
-void Mapa::DesregistraMapaRenderizavel()
-{
-	for(Object3D* o : _objetosMapa)
-	{
-		delete o;
-	}
-	_objetosMapa.clear();
 }
 
 Vector2 Mapa::GetPlayerSpawn(){
@@ -241,11 +259,9 @@ bool Mapa::GetEnemySpawn(unsigned id, Vector2& pos){
 }
 
 double tempoInterp = 1;
-void Mapa::OnUpdate()
-{
+void Mapa::OnUpdate(){
 	tempoInterp += GetFrameTime()*0.0125;
-	for(unsigned int i=0; i<_objetosMapa.size(); i++)
-	{
+	for(unsigned int i=0; i<_objetosMapa.size(); i++){
 		Object3D* objMapa = _objetosMapa.at(i);
 
 		if(Mapa::GetElementoMapa(objMapa->position.x, objMapa->position.z) == Parede){
@@ -280,11 +296,9 @@ void Mapa::OnUpdate()
 	}
 }
 
-void Mapa::OnMenuUpdate()
-{
+void Mapa::OnMenuUpdate(){
 	tempoInterp += GetFrameTime()*0.0125;
-	for(unsigned int i=0; i<_objetosMapa.size(); i++)
-	{
+	for(unsigned int i=0; i<_objetosMapa.size(); i++){
 		Object3D* objMapa = _objetosMapa.at(i);
 		Color col = {(unsigned char)((1+sin(objMapa->position.x/8 + GetTime()*1))*127), 
 				  	 (unsigned char)((1+sin(objMapa->position.z/8 + GetTime()*2))*127), 

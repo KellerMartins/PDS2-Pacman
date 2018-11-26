@@ -5,7 +5,7 @@
 
 namespace Game{
 
-    enum State{Intro, Menu, GameStart, GameInProgress, GameOver};
+    enum State{Intro, Menu, GameStart, GameInProgress, LevelCleared, GameOver};
 
     void Init(int screenWidth, int screenHeight, bool fullscreen, RenderManager::BlurQuality quality);
     void Quit();

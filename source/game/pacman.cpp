@@ -114,19 +114,22 @@ void Pacman::calcula_direcao(){
 }
 
 void Pacman::morrer(){
-	this->vivo = false;
-	this->vidas--;
-	
 	this->timerAnimacao = 0;
+	this->vivo = false;
+	if(vidas>0)
+		this->vidas--;
+}
 
-	if(!this->vidas){
-		//game over
-	}
+void Pacman::Reset(){
+	this->vivo = true;
+	this->vidas = 3;
+	this->velocidade = 2.5;
+	this->timerAnimacao = 0.0;
 }
 
 void Pacman::OnUpdate(){
 	
-	this->timerAnimacao += GetFrameTime() * 9/*Frames por segundo*/;
+	this->timerAnimacao += GetFrameTime() * 9 /*Frames por segundo*/;
 	
 	if(this->vivo){
 		this->calcula_direcao();
@@ -184,7 +187,7 @@ bool Pacman::IsAlive(){
 	return vivo;
 }
 
-int Pacman::GetScore(){
+unsigned Pacman::GetScore(){
 	return pontuacao;
 }
 

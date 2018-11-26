@@ -15,8 +15,8 @@ class Pacman : public GameEvents {
 private:
 	Object3D modelo;
 	bool vivo;
-	int vidas;
-	int pontuacao = 0;
+	unsigned int vidas;
+	unsigned int pontuacao = 0;
 	int direcao_y;
 	int direcao_x;
 	float x, y;
@@ -34,9 +34,10 @@ public:
 	void calcula_direcao();
 	bool verifica_posicao();
 	void morrer();
+	void Reset();
 
 	bool IsAlive();
-	int GetScore();
+	unsigned GetScore();
 	unsigned GetLifes();
 
 	virtual void OnUpdate();

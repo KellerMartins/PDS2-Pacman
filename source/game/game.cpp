@@ -30,7 +30,7 @@ namespace Game{
         RenderManager::SetBloomQuality(quality);
         RenderManager::SetCameraOffset((Vector3){0.0f, 18.5237f, 7.3416f});
 
-        Mapa::GetMapaGlobal().CarregaArquivo("assets/maps/mapa1.txt");
+        Mapa::CarregaArquivo("assets/maps/mapa1.txt");
 
         pacman = new Pacman(Mapa::GetPlayerSpawn().x,Mapa::GetPlayerSpawn().y);
 
@@ -71,6 +71,7 @@ namespace Game{
         UI::DrawTextCentered("Press space", 0.5, 0.8, 7, 0.0, { 246, 196, 2, 255 });
 
         if(IsKeyDown(KEY_SPACE)){
+            pacman->Reset();
             GameEvents::TriggerRestart();
             SetState(Game::GameStart);
         }
@@ -111,9 +112,34 @@ namespace Game{
             restartTimer += GetFrameTime();
 
             if(restartTimer >= 3){
-                GameEvents::TriggerRestart();
-                SetState(GameStart);
+                if(pacman->GetLifes() == 0){
+                    SetState(GameOver);
+                }else{
+                    GameEvents::TriggerRestart();
+                    SetState(GameStart);
+                }
             }
+        }
+        else if(Mapa::GetPontosRestantes() == 0){
+            SetState(LevelCleared);
+        }
+    }
+
+    void LevelClearedStateInit(){
+        
+    }
+
+    void LevelClearedStateUpdate(){
+        if(stateTimer < 4){
+            std::ostringstream scoreString;
+            scoreString << "Score:" << pacman->GetScore();
+            UI::DrawTextCentered(scoreString.str(), 0.5, 0.05, 5, 0.5, RAYWHITE);
+            UI::DrawTextCentered("Level Cleared!", 0.5, 0.5, 15, 0.0, WHITE);
+            GameEvents::TriggerMenuUpdate();
+        }else{
+            Mapa::Recarrega();
+            GameEvents::TriggerRestart();
+            SetState(GameStart);
         }
     }
 
@@ -122,7 +148,23 @@ namespace Game{
 
     }
     void GameOverStateUpdate(){
+        if(stateTimer < 4){
+            std::ostringstream scoreString;
+            scoreString << "Score:" << pacman->GetScore();
+            UI::DrawTextCentered(scoreString.str(), 0.5, 0.65, 8, 0.5, RAYWHITE);
+            UI::DrawTextCentered("Game Over!", 0.5, 0.5, 15, 0.0, PURPLE);
+            GameEvents::TriggerMenuUpdate();
 
+            RenderManager::camera.position = Lerp(RenderManager::camera.position, 
+                                                  {LARGURA/2, 32.0f, ALTURA/1.9}, 
+                                                  stateTimer/32);
+            RenderManager::camera.target = Lerp(RenderManager::camera.target,
+                                                {LARGURA/2, 0.0f, ALTURA/2}, 
+                                                stateTimer/32);
+        }else{
+            GameEvents::TriggerRestart();
+            SetState(Menu);
+        }
     }
 
     void SetState(State state){
@@ -144,6 +186,11 @@ namespace Game{
             case GameInProgress:
                 GameInProgressStateInit();
                 stateUpdateFunction = GameInProgressStateUpdate;
+            break;
+
+             case LevelCleared:
+                LevelClearedStateInit();
+                stateUpdateFunction = LevelClearedStateUpdate;
             break;
 
             case GameOver:

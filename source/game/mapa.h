@@ -23,10 +23,14 @@ enum ElementoMapa{Vazio, Parede, Ponto, Especial, Fruta};
 class Mapa : public GameEvents{
 	private:
 		ElementoMapa _mapa[LARGURA][ALTURA];
-		std::vector<Object3D*> _objetosMapa;
+		ElementoMapa _original[LARGURA][ALTURA];
 
+		int _pontosRestantes;
+		std::vector<Object3D*> _objetosMapa;
+		
 		Vector2 _playerSpawn;
 		std::map<unsigned, Vector2> _enemySpawn;
+
 		int _proximo[LARGURA*ALTURA][LARGURA*ALTURA];
 		
 		void RegistraMapaRenderizavel();
@@ -37,11 +41,14 @@ class Mapa : public GameEvents{
 		Mapa();
 		~Mapa();
 
-		void CarregaArquivo(std::string arq);
+		static void CarregaArquivo(std::string arq);
+		static void Recarrega();
 
 		static Mapa& GetMapaGlobal();
+		static unsigned GetPontosRestantes();
 		static ElementoMapa GetElementoMapa(unsigned int x, unsigned int y);
 		static void RemoveElementoMapa(unsigned int x, unsigned int y);
+
 		static Vector2 GetPlayerSpawn();
 		static bool GetEnemySpawn(unsigned id, Vector2& pos);
 

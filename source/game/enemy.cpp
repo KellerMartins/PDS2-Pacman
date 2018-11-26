@@ -131,6 +131,7 @@ void Enemy::OnUpdate(){
 
 void Enemy::OnRestart(){
 	model.position = {(float)spawnX, 0, (float)spawnY};
+	model.SetColor(color);
 	direcao_x = 0;
 	direcao_y = 0;
 	x = spawnX;
