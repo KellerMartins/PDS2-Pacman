@@ -3,29 +3,29 @@
 Blinky::Blinky(int x, int y):
     Enemy(x,y, RED){}
 
-void Blinky::set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y){
-    if(alive){
-        if(!scared){
+void Blinky::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dirY){
+    if(_alive){
+        if(!_scared){
             //Depois de um tempo o fantasma vai para o seu canto
-            if(scatter){
-                goal_x = 1;
-                goal_y = 1;
-                if(this->timerScatter > 0){
-                    this->timerScatter -= 4*GetFrameTime();
+            if(_scatter){
+                goalX = 1;
+                goalY = 1;
+                if(_timerScatter > 0){
+                    _timerScatter -= 4*GetFrameTime();
                     
                 }
             }else{
                 //segue o pacman
-                goal_x = pac_x;
-                goal_y = pac_y;
+                goalX = pacX;
+                goalY = pacY;
             }
         }else{
             //Quando ele esta com medo ele tambem vai para o seu canto
-            goal_x = 1;
-            goal_y = 1;
+            goalX = 1;
+            goalY = 1;
         }
     }else{
-        goal_x = 10;
-        goal_y = 10;
+        goalX = 10;
+        goalY = 10;
     }
 }

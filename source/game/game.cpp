@@ -36,23 +36,23 @@ namespace Game{
 
         Vector2 enemyPos;
         if(Mapa::GetEnemySpawn(0, enemyPos))
-            Enemy::adiciona_inimigo(new Blinky(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Blinky(enemyPos.x,enemyPos.y));
 
         if(Mapa::GetEnemySpawn(1, enemyPos))
-            Enemy::adiciona_inimigo(new Pinky(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Pinky(enemyPos.x,enemyPos.y));
 
         if(Mapa::GetEnemySpawn(2, enemyPos))
-            Enemy::adiciona_inimigo(new Inky(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Inky(enemyPos.x,enemyPos.y));
 
         if(Mapa::GetEnemySpawn(3, enemyPos))
-            Enemy::adiciona_inimigo(new Clyde(enemyPos.x,enemyPos.y));
+            Enemy::AdicionaInimigo(new Clyde(enemyPos.x,enemyPos.y));
 
         SetState(Menu);
     }
 
     void Quit(){
         delete pacman;
-        Enemy::remove_inimigos();
+        Enemy::RemoveInimigos();
         RenderManager::Quit();
     }
 
@@ -71,7 +71,7 @@ namespace Game{
         UI::DrawTextCentered("Press space", 0.5, 0.8, 7, 0.0, { 246, 196, 2, 255 });
 
         if(IsKeyDown(KEY_SPACE)){
-            pacman->Reset();
+            pacman->Resetar();
             GameEvents::TriggerRestart();
             SetState(Game::GameStart);
         }
@@ -100,9 +100,9 @@ namespace Game{
     void GameInProgressStateUpdate(){
         GameEvents::TriggerUpdate();
         std::ostringstream scoreString;
-        scoreString << "Score:" << pacman->GetScore();
+        scoreString << "Score:" << pacman->GetPontuacao();
         UI::DrawTextCentered(scoreString.str(), 0.5, 0.05, 5, 0.5, RAYWHITE);
-        for(unsigned i=0; i<pacman->GetLifes(); i++)
+        for(unsigned i=0; i<pacman->GetVidas(); i++)
             UI::DrawImage("assets/interface/pacman_icon.png", 0.05 + i*0.05, 0.9, 0.1, 0.1);
 
         if(!pacman->IsAlive()){
@@ -112,7 +112,7 @@ namespace Game{
             restartTimer += GetFrameTime();
 
             if(restartTimer >= 3){
-                if(pacman->GetLifes() == 0){
+                if(pacman->GetVidas() == 0){
                     SetState(GameOver);
                 }else{
                     GameEvents::TriggerRestart();
@@ -132,7 +132,7 @@ namespace Game{
     void LevelClearedStateUpdate(){
         if(stateTimer < 4){
             std::ostringstream scoreString;
-            scoreString << "Score:" << pacman->GetScore();
+            scoreString << "Score:" << pacman->GetPontuacao();
             UI::DrawTextCentered(scoreString.str(), 0.5, 0.05, 5, 0.5, RAYWHITE);
             UI::DrawTextCentered("Level Cleared!", 0.5, 0.5, 15, 0.0, WHITE);
             GameEvents::TriggerMenuUpdate();
@@ -150,7 +150,7 @@ namespace Game{
     void GameOverStateUpdate(){
         if(stateTimer < 4){
             std::ostringstream scoreString;
-            scoreString << "Score:" << pacman->GetScore();
+            scoreString << "Score:" << pacman->GetPontuacao();
             UI::DrawTextCentered(scoreString.str(), 0.5, 0.65, 8, 0.5, RAYWHITE);
             UI::DrawTextCentered("Game Over!", 0.5, 0.5, 15, 0.0, PURPLE);
             GameEvents::TriggerMenuUpdate();

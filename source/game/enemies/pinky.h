@@ -5,6 +5,6 @@
 class Pinky : public Enemy{
 public:
     Pinky(int x, int y);
-    virtual void set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y);
+    virtual void SetGoal(int &goalX, int &goal_y, int pacX, int pac_y,int dirX, int dirY);
 };
 #endif

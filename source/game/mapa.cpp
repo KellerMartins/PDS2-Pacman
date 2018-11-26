@@ -270,12 +270,12 @@ void Mapa::OnUpdate(){
 			int luzG = 0;
 			int luzB = 0;
 
-			std::vector<Enemy*>& inimigos = Enemy::get_enemies(); 
+			std::vector<Enemy*>& inimigos = Enemy::GetEnemies(); 
 			for(Enemy* e : inimigos){
-				Vector3 pos = {(float)e->get_x(), 0, (float)e->get_y()};
+				Vector3 pos = {(float)e->GetX(), 0, (float)e->GetY()};
 				float distVal = Smoothstep(0.4,0.8,1.0 - Distance(objMapa->position, pos)/4.0);
 
-				Color corInimigo = e->get_color();
+				Color corInimigo = e->GetColor();
 				luzR += corInimigo.r*distVal;
 				luzG += corInimigo.g*distVal;
 				luzB += corInimigo.b*distVal;

@@ -3,46 +3,46 @@
 Pinky::Pinky(int x, int y):
     Enemy(x,y, PINK){}
 
-void Pinky::set_goal(int &goal_x, int &goal_y, int pac_x, int pac_y,int dir_x, int dir_y){
-    if(alive){
-        if(!scared){
-           if(scatter){
-                goal_x = LARGURA -2;
-                goal_y = 1;
-                if(this->timerScatter > 0){
-                    this->timerScatter -= 4*GetFrameTime();
+void Pinky::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dirY){
+    if(_alive){
+        if(!_scared){
+           if(_scatter){
+                goalX = LARGURA -2;
+                goalY = 1;
+                if(_timerScatter > 0){
+                    _timerScatter -= 4*GetFrameTime();
                     
                 }
             }
             else{
                 //O goal esta duas posicoes na frente do pacman
                 //direita
-                if(dir_x == 1 && dir_y == 0){
-                    goal_x = pac_x + 2;
-                    goal_y = pac_y;
+                if(dirX == 1 && dirY == 0){
+                    goalX = pacX + 2;
+                    goalY = pacY;
                 }
                 //esquerda
-                else if(dir_x == -1 && dir_y == 0){
-                    goal_x = pac_x - 2;
-                    goal_y = pac_y;
+                else if(dirX == -1 && dirY == 0){
+                    goalX = pacX - 2;
+                    goalY = pacY;
                 }
                 //cima
-                else if(dir_x == 0 && dir_y == -1){
-                    goal_x = pac_x;
-                    goal_y = pac_y - 2;
+                else if(dirX == 0 && dirY == -1){
+                    goalX = pacX;
+                    goalY = pacY - 2;
                 }
                 //baixo
-                else if(dir_x == 0 && dir_y == 1){
-                    goal_x = pac_x;
-                    goal_y = pac_y + 2;
+                else if(dirX == 0 && dirY == 1){
+                    goalX = pacX;
+                    goalY = pacY + 2;
                 }
             }
         }else{
-            goal_x = LARGURA - 2;
-            goal_y = 1;
+            goalX = LARGURA - 2;
+            goalY = 1;
         }
     }else{
-        goal_x = 10;
-        goal_y = 10;
+        goalX = 10;
+        goalY = 10;
     }
 }
