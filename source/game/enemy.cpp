@@ -9,6 +9,7 @@
 
 std::vector<Enemy*> Enemy::_enemies;
 bool Enemy::_isOver = false;
+bool Enemy::_scared = false;
 
 Enemy::Enemy(int x, int y, Color color) : _model(DEFAULT_MODEL_PATH,color){
 	_spawnX = x;
@@ -18,8 +19,7 @@ Enemy::Enemy(int x, int y, Color color) : _model(DEFAULT_MODEL_PATH,color){
 	_model.position = {(float)x, 0, (float)y};
 	_direcaoY = 0;
 	_direcaoX = 0;
-
-	_scared = false;
+	
 	_scatter = false;
 	_alive = true;
 
@@ -46,16 +46,17 @@ std::vector<Enemy*> &Enemy::GetEnemies()
 	return _enemies;
 }
 
-void Enemy::GetScared(){
-	if(_alive){
-		_scared = true;
-		_model.SetColor(PURPLE);
+void Enemy::GetScared(bool state){
+	if(state){
+		_scared = state;
+	}
+	else{
+		_scared = state;
 	}
 }
 
 void Enemy::Morrer(){
 	_alive = false;
-	_scared = false;
 	_model.SetColor(WHITE);
 }
 
@@ -74,7 +75,13 @@ void Enemy::OnUpdate(){
 			_scatter = false;
 		}
 
-		
+		if(GetAlive() && IsScared()){
+			_model.SetColor(PURPLE);
+			_timerScatter = 0;
+		}
+		else if(GetAlive() && !IsScared()){
+			_model.SetColor(_color);
+		}
 		
 		int newGoalX,newGoalY;
 		SetGoal(newGoalX, newGoalY, pac_x,pac_y, dirX, dirY);

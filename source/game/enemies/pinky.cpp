@@ -10,7 +10,7 @@ void Pinky::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dir
                 goalX = LARGURA -2;
                 goalY = 1;
                 if(_timerScatter > 0){
-                    _timerScatter -= 4*GetFrameTime();
+                    _timerScatter -= 5*GetFrameTime();
                     
                 }
             }
