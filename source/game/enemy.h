@@ -26,6 +26,7 @@ protected:
 	bool _scatter;
 	bool _scared;
 	bool _alive;
+	static bool _isOver;
 	
 	float _velocidade;
 	Color _color;
@@ -42,6 +43,7 @@ public:
 	virtual void SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dirY) = 0;
 	static void AdicionaInimigo(Enemy* _enemy);
 	static void RemoveInimigos();
+	static void IsOver(bool state);
 	static std::vector<Enemy*> &GetEnemies();
 	void Morrer();
 	void GetScared();

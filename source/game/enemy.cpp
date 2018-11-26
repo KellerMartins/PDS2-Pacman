@@ -8,6 +8,7 @@
 #define VALOR_FRUTA 50
 
 std::vector<Enemy*> Enemy::_enemies;
+bool Enemy::_isOver = false;
 
 Enemy::Enemy(int x, int y, Color color) : _model(DEFAULT_MODEL_PATH,color){
 	_spawnX = x;
@@ -59,59 +60,64 @@ void Enemy::Morrer(){
 }
 
 void Enemy::OnUpdate(){
+	if(!_isOver){
+		int pac_x = Pacman::GetX();
+		int pac_y = Pacman::GetY();
+		int dirX =  Pacman::GetDirX();
+		int dirY =  Pacman::GetDirY();
 
-	int pac_x = Pacman::GetX();
-	int pac_y = Pacman::GetY();
-	int dirX =  Pacman::GetDirX();
-	int dirY =  Pacman::GetDirY();
-
-	_timerScatter += GetFrameTime();
-	if(_timerScatter > SCATTER_TIME) {
-		_scatter = true;
-	}
-	if(_timerScatter <= 0){
-		_scatter = false;
-	}
-
-	int newGoalX,newGoalY;
-	SetGoal(newGoalX, newGoalY, pac_x,pac_y, dirX, dirY);
-	if(newGoalX >= 0 && newGoalX < LARGURA && 
-	   newGoalY >= 0 && newGoalY < ALTURA && 
-	   Mapa::GetElementoMapa(newGoalX, newGoalY) != ElementoMapa::Parede){
-		_goalX = newGoalX;
-		_goalY = newGoalY;
-	}
-
-	_timerMovimento += GetFrameTime()*_velocidade;
-	if(abs(_x-Modulus(_x+_direcaoX, LARGURA)) != LARGURA-1){
-		_model.position.x = Lerp(_x, _x+_direcaoX, _timerMovimento);
-	}else{
-		_model.position.x = _x+_direcaoX;
-		_timerMovimento = 1;
-	}
-
-	if(abs(_y-Modulus(_y+_direcaoY, ALTURA)) != ALTURA-1){
-		_model.position.z = Lerp(_y, _y+_direcaoY, _timerMovimento);
-	}else{
-		_model.position.z = _y+_direcaoY;
-		_timerMovimento = 1;
-	}
-
-	if(_timerMovimento >= 1){
-		_timerMovimento = 0;
-		_x = Modulus(_x+_direcaoX, LARGURA);
-		_y = Modulus(_y+_direcaoY, ALTURA);
-		_model.position.x = _x;
-		_model.position.z = _y;
-		Mapa::ObtemDirecao(_x, _y, _goalX,_goalY, _direcaoX, _direcaoY);
-
-		if(!_alive && _x == _goalX && _y == _goalY){
-			_alive = true;
-			_model.SetColor(_color);
+		_timerScatter += GetFrameTime();
+		if(_timerScatter > SCATTER_TIME) {
+			_scatter = true;
 		}
+		if(_timerScatter <= 0){
+			_scatter = false;
+		}
+
+		
+		
+		int newGoalX,newGoalY;
+		SetGoal(newGoalX, newGoalY, pac_x,pac_y, dirX, dirY);
+
+
+		if(newGoalX >= 0 && newGoalX < LARGURA && 
+		newGoalY >= 0 && newGoalY < ALTURA && 
+		Mapa::GetElementoMapa(newGoalX, newGoalY) != ElementoMapa::Parede){
+			_goalX = newGoalX;
+			_goalY = newGoalY;
+		}
+
+		_timerMovimento += GetFrameTime()*_velocidade;
+		
+		if(abs(_x-Modulus(_x+_direcaoX, LARGURA)) != LARGURA-1){
+			_model.position.x = Lerp(_x, _x+_direcaoX, _timerMovimento);
+		}else{
+			_model.position.x = _x+_direcaoX;
+			_timerMovimento = 1;
+		}
+
+		if(abs(_y-Modulus(_y+_direcaoY, ALTURA)) != ALTURA-1){
+			_model.position.z = Lerp(_y, _y+_direcaoY, _timerMovimento);
+		}else{
+			_model.position.z = _y+_direcaoY;
+			_timerMovimento = 1;
+		}
+
+		if(_timerMovimento >= 1){
+			_timerMovimento = 0;
+			_x = Modulus(_x+_direcaoX, LARGURA);
+			_y = Modulus(_y+_direcaoY, ALTURA);
+			_model.position.x = _x;
+			_model.position.z = _y;
+			Mapa::ObtemDirecao(_x, _y, _goalX,_goalY, _direcaoX, _direcaoY);
+
+			if(!_alive && _x == _goalX && _y == _goalY){
+				_alive = true;
+				_model.SetColor(_color);
+			}
+		}
+
 	}
-
-
 	//DEBUG: Desenho do caminho e da posição dos fantasmas
 	/*int ix = _x;
 	int iy = _y;
@@ -143,7 +149,9 @@ void Enemy::OnRestart(){
 bool Enemy::IsScared(){
 	return _scared;
 }
-
+void Enemy::IsOver(bool state){
+	_isOver = state;
+}
 Color Enemy::GetColor(){
 	return _scared? (Color)PURPLE : (_alive? _color : (Color)WHITE);
 }

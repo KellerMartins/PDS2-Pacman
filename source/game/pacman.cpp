@@ -46,6 +46,7 @@ bool Pacman::VerificaPosicao(){
 				_pontuacao += 50;
 			}else if(enemies[i]->GetAlive()){
 				Morrer();
+				Enemy::IsOver(true);
 				return 0;				
 			}
 		}
@@ -165,6 +166,7 @@ void Pacman::OnRestart(){
 	_vivo = true;
 	_parado.SetTimer(0);
 	_modelo.Load3DModel(_parado.GetCurrentFrame());
+	Enemy::IsOver(false);
 }
 
 int Pacman::GetX(){
@@ -173,6 +175,7 @@ int Pacman::GetX(){
 int Pacman::GetY(){
 	return _yToGhost;
 }
+
 int Pacman::GetDirX(){
 	return _dirxToGhost;
 }
@@ -191,3 +194,4 @@ int Pacman::GetScore(){
 unsigned Pacman::GetLifes(){
 	return _vidas;
 }
+
