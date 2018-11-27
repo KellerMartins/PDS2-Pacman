@@ -18,8 +18,8 @@ namespace RenderManager{
             Color _color;
         public:
             DebugLine(Vector3 start, Vector3 end, Color color) : _start(start), 
-                                                                _end(end), 
-                                                                _color(color) {}
+                                                                 _end(end), 
+                                                                 _color(color) {}
             virtual void Draw(){
                 DrawLine3D(_start, _end, _color);
             }
@@ -32,8 +32,8 @@ namespace RenderManager{
             Color _color;
         public:
             DebugSphere(Vector3 center, float radius, Color color) : _center(center), 
-                                                                    _radius(radius), 
-                                                                    _color(color) {}
+                                                                     _radius(radius), 
+                                                                     _color(color) {}
             virtual void Draw(){
                 DrawSphereWires(_center, _radius, 4, 8, _color);
             }
@@ -46,8 +46,8 @@ namespace RenderManager{
             Color _color;
         public:
             DebugCube(Vector3 position, Vector3 size, Color color) : _position(position), 
-                                                                    _size(size), 
-                                                                    _color(color) {}
+                                                                     _size(size), 
+                                                                     _color(color) {}
             virtual void Draw(){
                 DrawCubeWires(_position, _size.x, _size.y, _size.z, _color);
             }

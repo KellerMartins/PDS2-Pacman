@@ -21,7 +21,7 @@ int Step(float edge, float x );
 float Smoothstep(float edge0, float edge1, float x);
 
 //Modulus functions, returning only positive values
-int Modulus(float a, float b);
+int Modulus(int a, int b);
 float fModulus(float a, float b);
 
 #endif

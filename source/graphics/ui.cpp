@@ -1,6 +1,6 @@
 #include "ui.h"
 
-enum ElementType{UIText, UITextCentered, UIImage};
+enum ElementType{UIText, UITextCentered, UIImage, UIRect};
 struct UIElement{
     ElementType type;
     float x;
@@ -27,6 +27,14 @@ struct UIElement{
         y = Y;
         width = Spacing;
         height = Size;
+    }
+    UIElement(float X, float Y, float Width, float Height, Color ColorTint){
+        colorTint = ColorTint;
+        type = UIRect;
+        x = X;
+        y = Y;
+        width = Width;
+        height = Height;
     }
 };
 
@@ -74,6 +82,10 @@ namespace UI{
         _elements.push_back(UIElement(Text, X, Y, Size, Spacing, ColorTint, true));
     }
 
+    void DrawRect(float X, float Y, float Width, float Height, Color ColorTint){
+        _elements.push_back(UIElement(X, Y, Width, Height, ColorTint));
+    }
+
     void Render(){
         float screenWidth = (float)RenderManager::GetWidth();
         float screenHeight = (float)RenderManager::GetHeight();
@@ -112,6 +124,10 @@ namespace UI{
                 }
 
                 DrawTextEx(_font, e.string.c_str(), position, fontSize, spacing, e.colorTint);
+            }else if(e.type == ElementType::UIRect){
+                DrawRectangle(e.x*screenWidth, e.y*screenHeight, 
+                              e.width*screenWidth, e.height*screenHeight, 
+                              e.colorTint);
             }
         }
 

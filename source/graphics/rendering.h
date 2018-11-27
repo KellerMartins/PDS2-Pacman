@@ -11,9 +11,9 @@
 #define MIN_HEIGHT 450
 
 #define MASK_TEXTURE_PATH "assets/models/textureMask.png"
-#define DEFAULT_MODEL_PATH "assets/models/Cube.obj"
+#define DEFAULT_MODEL_PATH "assets/models/cube.obj"
 
-#define CAMERA_SPEED 1
+#define CAMERA_DEFAULT_SPEED 1
 
 namespace RenderManager{
 
@@ -39,6 +39,7 @@ namespace RenderManager{
 
         void SetCameraOffset(Vector3 offset);
         void CameraFollow(Vector3 position);
+        void CameraFollow(Vector3 position, float speed);
 
         Texture2D GetMaskTexture();
 };
