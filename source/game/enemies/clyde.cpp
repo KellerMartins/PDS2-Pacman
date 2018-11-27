@@ -1,7 +1,7 @@
 #include "clyde.h"
 
 Clyde::Clyde(int x, int y):
-    Enemy(x,y,YELLOW){}
+    Enemy(x,y,ORANGE){}
 
 void Clyde::SetGoal(int &goalX, int &goalY, int pacX, int pacY,int dirX, int dirY){
     if(_alive){

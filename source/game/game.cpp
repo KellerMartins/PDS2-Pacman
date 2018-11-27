@@ -166,6 +166,7 @@ namespace Game{
                                                 {LARGURA/2, 0.0f, ALTURA/2}, 
                                                 stateTimer/32);
         }else{
+            Mapa::CarregaArquivo("assets/maps/mapa1.txt");
             GameEvents::TriggerRestart();
             SetState(Menu);
         }

@@ -33,6 +33,10 @@ int main(){
 }
 
 bool OpenConfigWindow(){ 
+    #ifdef NDEBUG
+    SetTraceLog(0);
+    #endif
+    
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(575, 110, "Opções | Pacman Remake - PDS2");
     

@@ -11,7 +11,7 @@ std::vector<Enemy*> Enemy::_enemies;
 bool Enemy::_isOver = false;
 bool Enemy::_scared = false;
 
-Enemy::Enemy(int x, int y, Color color) : _model(DEFAULT_MODEL_PATH,color){
+Enemy::Enemy(int x, int y, Color color) : _model("assets/models/ghost.obj",color){
 	_spawnX = x;
 	_spawnY = y;
 	_x = x;
@@ -24,7 +24,7 @@ Enemy::Enemy(int x, int y, Color color) : _model(DEFAULT_MODEL_PATH,color){
 	_alive = true;
 
 	_color = color;
-	_velocidade = 2.5;
+	_velocidade = GHOST_SPEED_DEFAULT;
 
 	_timerMovimento = 0.0;
 	_timerScatter = 0.0;
@@ -47,17 +47,13 @@ std::vector<Enemy*> &Enemy::GetEnemies()
 }
 
 void Enemy::GetScared(bool state){
-	if(state){
-		_scared = state;
-	}
-	else{
-		_scared = state;
-	}
+	_scared = state;
 }
 
 void Enemy::Morrer(){
 	_alive = false;
 	_model.SetColor(WHITE);
+	_model.Load3DModel("assets/models/ghost_dead.obj");
 }
 
 void Enemy::OnUpdate(){
@@ -94,6 +90,7 @@ void Enemy::OnUpdate(){
 			_goalY = newGoalY;
 		}
 
+		_velocidade = _scared && _alive ? GHOST_SPEED_SCARED : GHOST_SPEED_DEFAULT;
 		_timerMovimento += GetFrameTime()*_velocidade;
 		
 		if(abs(_x-Modulus(_x+_direcaoX, LARGURA)) != LARGURA-1){
@@ -121,25 +118,18 @@ void Enemy::OnUpdate(){
 			if(!_alive && _x == _goalX && _y == _goalY){
 				_alive = true;
 				_model.SetColor(_color);
+				_model.Load3DModel("assets/models/ghost.obj");
 			}
 		}
 
+		float lookAngle = _direcaoX < 0 ? -90 : 
+						  _direcaoX > 0 ? 90 :
+						  _direcaoY < 0 ? 180 : 
+						  _direcaoY > 0 ? 0 : _model.rotationAngle;
+		
+		_model.rotationAngle = Lerp(_model.rotationAngle, lookAngle, GetFrameTime()*5);
+
 	}
-	//DEBUG: Desenho do caminho e da posição dos fantasmas
-	/*int ix = _x;
-	int iy = _y;
-	int dx = 0;
-	int dy = 0;
-
-	do{
-		Mapa::ObtemDirecao(ix, iy, _goalX,_goalY, dx, dy);
-		RenderManager::DrawDebugLine((Vector3){(float)ix, 0.5, (float)iy}, (Vector3){(float)ix+dx, 0.5, (float)iy+dy}, _color);
-		ix+=dx;
-		iy+=dy;
-	}while(dx != 0 || dy != 0);
-
-	RenderManager::DrawDebugCube((Vector3){(float)model.position.x, 0.5, (float)model.position.z}, (Vector3){1,1,1}, _color);
-	*/
 }
 
 void Enemy::OnRestart(){
@@ -157,11 +147,13 @@ void Enemy::OnRestart(){
 bool Enemy::IsScared(){
 	return _scared;
 }
+
 void Enemy::IsOver(bool state){
 	_isOver = state;
 }
+
 Color Enemy::GetColor(){
-	return _scared? (Color)PURPLE : (_alive? _color : (Color)WHITE);
+	return _scared && _alive? (Color)PURPLE : (_alive? _color : (Color)WHITE);
 }
 
 float Enemy::GetX(){

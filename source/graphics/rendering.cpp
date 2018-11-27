@@ -62,10 +62,16 @@ namespace RenderManager{
         #ifdef NDEBUG
         SetTraceLog(0);
         ShowLogo();
+        #else
+        SetTraceLog(LOG_DEBUG|LOG_ERROR|LOG_WARNING|LOG_INFO);
         #endif
         
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         InitWindow(screenWidth, screenHeight, windowTitle.c_str());
+        
+        Image icon = LoadImage("assets/interface/pacman_icon.png");         
+        SetWindowIcon(icon);
+        UnloadImage(icon);
 
         #ifdef NDEBUG
         SetTargetFPS(60);
