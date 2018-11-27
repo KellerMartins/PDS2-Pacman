@@ -127,6 +127,7 @@ void Pacman::Morrer(){
 }
 
 void Pacman::Resetar(){
+	_pontuacao = 0;
 	_vivo = true;
 	_vidas = 3;
 	_velocidade = 2.5;
