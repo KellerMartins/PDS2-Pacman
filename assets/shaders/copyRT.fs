@@ -1,13 +1,14 @@
-#version 330
+#version 100
+precision mediump float;
 
-in vec2 fragTexCoord;
-in vec4 fragColor;
+varying vec2 fragTexCoord;
+varying vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 uniform vec2 PixelSize;
 
-out vec4 finalColor;
+varying vec4 finalColor;
 
 float BSpline( float x )
 {
@@ -56,6 +57,5 @@ vec4 BiCubic( sampler2D textureSampler, vec2 TexCoord )
 
 
 void main(void) {
-
-    finalColor = BiCubic(texture0, fragTexCoord);
+    gl_FragColor = BiCubic(texture0, fragTexCoord);
 }

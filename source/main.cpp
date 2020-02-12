@@ -1,35 +1,53 @@
 #include <raylib.h>
 #include "game/game.h"
 
+#if defined(EMSCRIPTEN)
+    #include <emscripten/emscripten.h>
+#endif
+
 int width = 800;
 int height = 450;
 bool fullscreen = false;
-RenderManager::BlurQuality quality = RenderManager::Medium;
+RenderManager::BlurQuality quality = RenderManager::High;
 
 bool OpenConfigWindow();
+void Update();
 
 int main(){
     
-    #ifdef NDEBUG
+    #if defined(NDEBUG) && !defined(EMSCRIPTEN)
     if(!OpenConfigWindow())
         return 0;
+    #endif
+
+    #if defined(EMSCRIPTEN)
+    width = 1024;
+    height = 576;
     #endif
     
     Game::Init(width, height, fullscreen, quality);
 
-    while(!WindowShouldClose()){
-        #ifndef NDEBUG
-        if(IsKeyPressed(KEY_R))
-            RenderManager::ReloadShaders();
-        #endif
-
-        Game::Update();
-        RenderManager::Render();
-    }
+    #if defined(EMSCRIPTEN)
+        emscripten_set_main_loop(Update, 0, 1);
+    #else
+        while(!WindowShouldClose()){
+            Update();
+        }
+    #endif
 
     Game::Quit();
 
     return 0;
+}
+
+void Update() {
+    #ifndef NDEBUG
+    if(IsKeyPressed(KEY_R))
+        RenderManager::ReloadShaders();
+    #endif
+
+    Game::Update();
+    RenderManager::Render();
 }
 
 bool OpenConfigWindow(){ 

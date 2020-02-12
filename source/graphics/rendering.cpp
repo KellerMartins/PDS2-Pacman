@@ -1,6 +1,11 @@
 #include "rendering.h"
 
+#ifndef EMSCRIPTEN
 #include "glad/glad.h"
+#else
+#include <GL/gl.h>
+#endif
+
 #include "../utils.h"
 #include "ui.h"
 

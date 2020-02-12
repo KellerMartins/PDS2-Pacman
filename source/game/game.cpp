@@ -67,7 +67,7 @@ namespace Game{
         UI::DrawImage("assets/interface/title.png",0.5,0.4,0.75,0.75);
         UI::DrawTextCentered("Press space", 0.5, 0.8, 7, 0.0, { 246, 196, 2, 255 });
 
-        #ifdef NDEBUG
+        #if defined(NDEBUG) && !defined(EMSCRIPTEN)
         if(1.0-introFadeTimer > 0){
             UI::DrawRect(0,0,1,1,Lerp(RAYWHITE, {0, 0, 0, 0}, introFadeTimer));
             introFadeTimer+=2*Clamp(GetFrameTime(),0,0.016);

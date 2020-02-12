@@ -1,7 +1,8 @@
-#version 330
+#version 100
+precision mediump float;
 
-in vec2 fragTexCoord;
-in vec4 fragColor;
+varying vec2 fragTexCoord;
+varying vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform sampler2D texture1;
@@ -12,7 +13,7 @@ uniform float height;
 
 uniform float vignettePower;
 
-out vec4 finalColor;
+varying vec4 finalColor;
 
 float when_gt(float x, float y) {
    return max(sign(x - y), 0.0);
@@ -95,7 +96,7 @@ void main(void) {
     float vignette = clamp(1.0 - dot(dist, dist)*vignettePower,0.0,1.0);
 
     vec3 sharp = FXAA(texture0, fragTexCoord, vec2(1.0/width, 1.0/height)).rgb;
-    vec3 blur = texture(texture1, fragTexCoord).rgb;
+    vec3 blur = texture2D(texture1, fragTexCoord).rgb;
 
     const float expos = 0.75;
     vec3 pixel = (sharp*3.0 + blur*5.0);
@@ -104,5 +105,5 @@ void main(void) {
     float maxVal = max(pixel.r, max(pixel.g, pixel.b));
     pixel.rgb += when_gt(maxVal,1.0)*vec3(maxVal - 1.0);
 
-    finalColor = vec4(vignette*pixel,1.0);
+    gl_FragColor = vec4(vignette*pixel,1.0);
 }

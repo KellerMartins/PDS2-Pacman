@@ -1,7 +1,8 @@
-#version 330
+#version 100
+precision mediump float;
 
-in vec2 fragTexCoord;
-in vec4 fragColor;
+varying vec2 fragTexCoord;
+varying vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
@@ -9,7 +10,7 @@ uniform vec4 colDiffuse;
 uniform vec4 xyHalfPixelSize_zwPixelSize;
 uniform int blurQuality;
 
-out vec4 finalColor;
+varying vec4 finalColor;
 
 //Gaussian blur functions from 
 //https://software.intel.com/en-us/blogs/2014/07/15/an-investigation-of-fast-real-time-gpu-based-image-blur-algorithms
@@ -69,7 +70,7 @@ vec3 GaussianBlur63( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 p
 
 vec3 GaussianBlur35( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 pixelOffset )                                                                           
 {                                                                                                                                                                    
-    vec3 colOut = vec3( 0, 0, 0 );                                                                                                                                   
+    vec3 colOut = vec3( 0.0, 0.0, 0.0 );                                                                                                                                   
                                                                                                                                                                      
     //Kernel width 35 x 35
     const int stepCount = 9;
@@ -106,7 +107,7 @@ vec3 GaussianBlur35( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 p
 }          
 vec3 GaussianBlur19( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 pixelOffset )                                                                           
 {                                                                                                                                                                    
-    vec3 colOut = vec3( 0, 0, 0 );                                                                                                                                   
+    vec3 colOut = vec3( 0.0, 0.0, 0.0 );                                                                                                                                   
 
     //Kernel 19x19
     
@@ -137,7 +138,7 @@ vec3 GaussianBlur19( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 p
 
 vec3 GaussianBlur15( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 pixelOffset )                                                                           
 {                                                                                                                                                                    
-    vec3 colOut = vec3( 0, 0, 0 );                                                                                                                                   
+    vec3 colOut = vec3( 0.0, 0.0, 0.0 );                                                                                                                                   
 
     //Kernel 15x15
     const int stepCount = 4;
@@ -167,11 +168,11 @@ vec3 GaussianBlur15( sampler2D tex0, vec2 centreUV, vec2 halfPixelOffset, vec2 p
 void main()
 {   
     if(blurQuality == 2)
-        finalColor.rgb = GaussianBlur63(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+        gl_FragColor.rgb = GaussianBlur63(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
     else if(blurQuality == 1)
-        finalColor.rgb = GaussianBlur35(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+        gl_FragColor.rgb = GaussianBlur35(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
     else if(blurQuality == 0)
-        finalColor.rgb = GaussianBlur15(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
+        gl_FragColor.rgb = GaussianBlur15(texture0, fragTexCoord, xyHalfPixelSize_zwPixelSize.xy, xyHalfPixelSize_zwPixelSize.zw);
 
-    finalColor.a = 1.0;
+    gl_FragColor.a = 1.0;
 }
