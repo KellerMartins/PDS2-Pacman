@@ -25,7 +25,7 @@ Pacman::Pacman(int x, int y) : _modelo("assets/models/pacman/idle/player_idle_0.
 	_direcaoX = 0;
 	_vivo = true;
 	_vidas = 3;
-	_velocidade = 2.5;
+	_velocidade = PACMAN_SPEED_DEFAULT;
 	_timerAnimacao = 0.0;
 	_timerScared = 0.0;
 	_scaredTime = 6;
@@ -130,7 +130,7 @@ void Pacman::Resetar(){
 	_pontuacao = 0;
 	_vivo = true;
 	_vidas = 3;
-	_velocidade = 2.5;
+	_velocidade = PACMAN_SPEED_DEFAULT;
 	_timerAnimacao = 0.0;
 }
 

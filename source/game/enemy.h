@@ -13,8 +13,8 @@
 #include "../utils.h"
 
 #define SCATTER_TIME 20
-#define GHOST_SPEED_DEFAULT 2.5
-#define GHOST_SPEED_SCARED 1.0
+#define GHOST_SPEED_DEFAULT 3
+#define GHOST_SPEED_SCARED 1.25
 
 class Enemy : public GameEvents {
 protected:

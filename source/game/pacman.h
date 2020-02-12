@@ -11,6 +11,8 @@
 #include "gameEvents.h"
 #include "mapa.h"
 
+#define PACMAN_SPEED_DEFAULT 3.5
+
 class Pacman : public GameEvents {
 private:
 	Object3D _modelo;
