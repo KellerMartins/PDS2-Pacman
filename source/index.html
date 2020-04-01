@@ -72,23 +72,105 @@
 			width: 30px;
 			height: 30px;
 		}
+
+		#status {
+			color: #FFEB3B;
+			text-align: center;
+			font-size: xx-large;
+			font-family: fantasy;
+			z-index: 100;
+			position: absolute;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			top: 43%;
+		}
+
+		#progress {
+			position: absolute;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			top: 50%;
+
+			-webkit-appearance: none;
+			appearance: none;
+			width: 375px;
+			height: 20px;
+		}
+
+		#progress::-webkit-progress-bar {
+			background-color: #eee;
+			border-radius: 2px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+		}
+
+		#progress::-webkit-progress-value {
+			background-image:
+				-webkit-linear-gradient(-45deg, 
+																transparent 33%, rgba(0, 0, 0, .1) 33%, 
+																rgba(0,0, 0, .1) 66%, transparent 66%),
+				-webkit-linear-gradient(top, 
+																rgba(255, 255, 255, .25), 
+																rgba(0, 0, 0, .25)),
+				-webkit-linear-gradient(left, #10bdf2, #10bdf2);
+
+				border-radius: 2px; 
+				background-size: 35px 20px, 100% 100%, 100% 100%;
+		}
 	</style>
 </head>
 <body onload="window.onresize();">
-  <div id="gameContainer">
-		<canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" width="800" height="450" style="cursor: default;"></canvas>
+  <progress value="0" max="100" id="progress" hidden=1></progress>  
+	<div id="status">Downloading...</div>
+
+	<div id="gameContainer">
+		<canvas id="canvas" oncontextmenu="event.preventDefault()" width="800" height="450" style="cursor: default;"></canvas>
   </div>
-  
-	<script type="text/javascript">
+
+	<script>
+		var statusElement = document.getElementById('status');
+		var progressElement = document.getElementById('progress');
 		var Module = {
 			preRun: [],
 			postRun: [resize],
+
 			canvas: (function() {
 				var canvas = document.getElementById('canvas');
 				canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
 				return canvas;
 			})(),
+
+			setStatus: function(text) {
+				if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+				if (text === Module.setStatus.last.text) return;
+				var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+				var now = Date.now();
+				if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+				Module.setStatus.last.time = now;
+				Module.setStatus.last.text = text;
+				if (m) {
+					progressElement.value = parseInt(m[2])*100;
+					progressElement.max = parseInt(m[4])*100;
+					progressElement.hidden = false;
+					text = m[1] + " ("+(parseInt(m[4])/1000000).toFixed(1)+"Mb)"
+				} else {
+					progressElement.value = null;
+					progressElement.max = null;
+					progressElement.hidden = true;
+				}
+				statusElement.innerHTML = text;
+			},
+
+			totalDependencies: 0,
+			monitorRunDependencies: function(left) {
+				this.totalDependencies = Math.max(this.totalDependencies, left);
+				Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+			}
 		};
+		Module.setStatus('Downloading...')
 
 		function toggleFullscreen() {
 			let elem = document.getElementById('canvas');
